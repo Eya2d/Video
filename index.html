@@ -232,7 +232,6 @@
             border-radius: 99px;
             cursor: pointer;
             transition: height 0.15s ease;
-            touch-action: none;
         }
         .progress-track:hover,
         .progress-track.dragging {
@@ -313,6 +312,9 @@
         .custom-volume.touch-expanded {
             width: 120px;
         }
+        .custom-volume.touch-expanded .volume-track-wrap {
+            opacity: 1;
+        }
         .custom-volume .volume-icon {
             cursor: pointer;
             user-select: none;
@@ -335,8 +337,7 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        .custom-volume:hover .volume-track-wrap,
-        .custom-volume.touch-expanded .volume-track-wrap {
+        .custom-volume:hover .volume-track-wrap {
             opacity: 1;
         }
         .volume-track {
@@ -347,7 +348,6 @@
             border-radius: 99px;
             cursor: pointer;
             transition: all 0.15s ease;
-            touch-action: none;
         }
         .volume-track:hover {
             height: 6px;
@@ -769,31 +769,6 @@
             display: flex;
             align-items: center;
         }
-
-        /* ===== دعم اللمس - منطقة النقر المزدوج ===== */
-        .touch-seek-area {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 35%;
-            z-index: 6;
-            display: none;
-        }
-        .touch-seek-area.left  { left: 0; }
-        .touch-seek-area.right { right: 0; }
-
-        @media (pointer: coarse) {
-            .touch-seek-area { display: block; }
-            .progress-track { height: 6px; padding: 8px 0; box-sizing: content-box; background-clip: content-box; }
-            .progress-track:hover, .progress-track.dragging { height: 8px; }
-            .progress-thumb { width: 18px; height: 18px; }
-            .progress-track:hover .progress-thumb,
-            .progress-track.dragging .progress-thumb { transform: translate(-50%, -50%) scale(1); }
-            .volume-track { height: 6px; padding: 8px 0; box-sizing: content-box; background-clip: content-box; }
-            .volume-thumb { width: 16px; height: 16px; transform: translate(-50%, -50%) scale(1); }
-            .custom-buttons button { height: 36px; min-width: 36px; }
-            .coooomf button { width: 38px; height: 38px; }
-        }
     </style>
     `;
 
@@ -824,7 +799,6 @@
     const SPEED_OPTIONS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
     const DEFAULT_SPEED = 1;
 
-    /* مدة الأنيميشن — يجب أن تتطابق مع قيم CSS */
     const ANIM_DURATION = 180;
 
     function formatTime(s) {
@@ -894,15 +868,7 @@
         scanlineDiv.innerHTML = '<div class="xxxxdww"></div>';
         wrapper.appendChild(scanlineDiv);
 
-        /* ===== منطقتا النقر المزدوج للتخطي (للمس) ===== */
-        const touchSeekLeft  = document.createElement('div');
-        touchSeekLeft.className  = 'touch-seek-area left';
-        const touchSeekRight = document.createElement('div');
-        touchSeekRight.className = 'touch-seek-area right';
-        wrapper.appendChild(touchSeekLeft);
-        wrapper.appendChild(touchSeekRight);
-
-        /* ===== زر الإعدادات في الزاوية العلوية اليمنى ===== */
+        /* ===== زر الإعدادات ===== */
         const settingsCorner = document.createElement('div');
         settingsCorner.className = 'cvp-settings-corner';
 
@@ -914,7 +880,6 @@
         settingsCorner.appendChild(settingsBtn);
         wrapper.appendChild(settingsCorner);
 
-        /* ===== حالة القوائم ===== */
         let currentSpeed  = DEFAULT_SPEED;
         let activeMenuEl  = null;
         let backdropEl    = null;
@@ -941,13 +906,7 @@
                 e.stopPropagation();
                 swapMenu('speed');
             });
-            menu.querySelector('.cvp-speed-trigger').addEventListener('touchend', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                swapMenu('speed');
-            });
             menu.addEventListener('click', (e) => e.stopPropagation());
-            menu.addEventListener('touchend', (e) => e.stopPropagation());
             return menu;
         }
 
@@ -975,11 +934,6 @@
                 e.stopPropagation();
                 swapMenu('settings');
             });
-            menu.querySelector('.cvp-speed-back-btn').addEventListener('touchend', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                swapMenu('settings');
-            });
             menu.querySelectorAll('.cvp-speed-option').forEach(opt => {
                 opt.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -988,17 +942,8 @@
                     videoElement.playbackRate = speed;
                     closeAll();
                 });
-                opt.addEventListener('touchend', (e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    const speed = parseFloat(opt.dataset.speed);
-                    currentSpeed = speed;
-                    videoElement.playbackRate = speed;
-                    closeAll();
-                });
             });
             menu.addEventListener('click', (e) => e.stopPropagation());
-            menu.addEventListener('touchend', (e) => e.stopPropagation());
             return menu;
         }
 
@@ -1009,11 +954,10 @@
                 e.stopPropagation();
                 closeAll();
             });
-            bd.addEventListener('touchend', (e) => {
+            bd.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
-                e.preventDefault();
                 closeAll();
-            });
+            }, { passive: true });
             return bd;
         }
 
@@ -1081,28 +1025,14 @@
                 openSettings();
             }
         });
-        settingsBtn.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (activeMenuEl) {
-                closeAll();
-            } else {
-                openSettings();
-            }
-        });
 
         document.addEventListener('mousedown', (e) => {
             if (activeMenuEl && !wrapper.contains(e.target)) {
                 closeAll();
             }
         });
-        document.addEventListener('touchend', (e) => {
-            if (activeMenuEl && !wrapper.contains(e.target)) {
-                closeAll();
-            }
-        });
 
-        /* ===== شريط التحكم الرئيسي ===== */
+        /* ===== شريط التحكم ===== */
         const controls = document.createElement('div');
         controls.className = 'custom-controls';
         controls.innerHTML = `
@@ -1149,6 +1079,7 @@
         const volumeTrack      = controls.querySelector('.volume-track');
         const volumeFill       = controls.querySelector('.volume-fill');
         const volumeThumb      = controls.querySelector('.volume-thumb');
+        const volumeWrap       = controls.querySelector('.custom-volume');
         const playBtn          = controls.querySelector('.custom-play');
         const restartBtn       = controls.querySelector('.custom-restart');
         const fullscreenBtn    = controls.querySelector('.custom-fullscreen');
@@ -1157,7 +1088,6 @@
         const totalTimeDisplay = controls.querySelector('.time1');
         const toggleScanBtn    = controls.querySelector('.veowc2s0d');
         const saveBtn          = controls.querySelector('.Video-save');
-        const customVolume     = controls.querySelector('.custom-volume');
 
         const allButtons = [playBtn, restartBtn, fullscreenBtn, toggleScanBtn, saveBtn, volumeIcon];
         const volumeTrackDiv = volumeTrack;
@@ -1205,7 +1135,7 @@
 
         videoElement.addEventListener('durationchange', updateTotalTimeDisplay);
 
-        /* حفظ مستوى الصوت واستعادته */
+        /* حفظ واستعادة مستوى الصوت */
         let volumeStorageKey = null;
         function getVolumeKey() {
             if (!volumeStorageKey) volumeStorageKey = getStorageKey(videoElement, 'vol');
@@ -1296,12 +1226,6 @@
             if (isSaving) stopSaving();
             else startSaving();
         });
-        saveBtn.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (isSaving) stopSaving();
-            else startSaving();
-        });
 
         videoElement.addEventListener('seeked', () => saveCurrentPosition());
         videoElement.addEventListener('timeupdate', () => { if (isSaving) saveCurrentPosition(); });
@@ -1348,17 +1272,6 @@
             }
         });
 
-        /* ===== دعم اللمس - إظهار/إخفاء أدوات التحكم ===== */
-        let touchControlsVisible = false;
-
-        wrapper.addEventListener('touchstart', (e) => {
-            /* لا تتدخل إذا كان الهدف أدوات التحكم نفسها */
-            if (controls.contains(e.target) || settingsCorner.contains(e.target)) return;
-            showControls();
-            touchControlsVisible = true;
-            scheduleHide();
-        }, { passive: true });
-
         function updateTimeDisplay() {
             const remaining = (videoElement.duration || 0) - (videoElement.currentTime || 0);
             timeDisplay.textContent = formatTime(remaining);
@@ -1402,10 +1315,10 @@
             timeDisplay.textContent = formatTime(remaining);
         }
 
-        function updateTooltip(e) {
+        function updateTooltip(clientX) {
             if (!videoElement.duration) return;
             const rect = progressTrack.getBoundingClientRect();
-            let x = e.clientX - rect.left;
+            let x = clientX - rect.left;
             x = Math.max(0, Math.min(x, rect.width));
             const pct = x / rect.width;
             const elapsed = pct * videoElement.duration;
@@ -1413,18 +1326,7 @@
             progressTooltip.style.left = x + 'px';
         }
 
-        function updateTooltipFromTouch(touch) {
-            if (!videoElement.duration) return;
-            const rect = progressTrack.getBoundingClientRect();
-            let x = touch.clientX - rect.left;
-            x = Math.max(0, Math.min(x, rect.width));
-            const pct = x / rect.width;
-            const elapsed = pct * videoElement.duration;
-            progressTooltip.textContent = formatTime(elapsed);
-            progressTooltip.style.left = x + 'px';
-        }
-
-        /* ===== شريط التقدم - Mouse ===== */
+        /* ===== شريط التقدم - ماوس ===== */
         let seekingProgress = false;
         progressTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
@@ -1433,91 +1335,12 @@
             applySeekPct(getPctFromEvent(e, progressTrack));
         });
 
-        /* ===== شريط التقدم - Touch ===== */
-        progressTrack.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-            seekingProgress = true;
-            progressTrack.classList.add('dragging');
-            const touch = e.touches[0];
-            applySeekPct(getPctFromTouch(touch, progressTrack));
-            updateTooltipFromTouch(touch);
-        }, { passive: true });
-
-        progressTrack.addEventListener('touchmove', (e) => {
-            if (!seekingProgress) return;
-            e.stopPropagation();
-            e.preventDefault();
-            const touch = e.touches[0];
-            applySeekPct(getPctFromTouch(touch, progressTrack));
-            updateTooltipFromTouch(touch);
-        }, { passive: false });
-
-        progressTrack.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            seekingProgress = false;
-            progressTrack.classList.remove('dragging');
-            scheduleHide();
-        });
-
-        /* ===== شريط الصوت - Mouse ===== */
-        let seekingVolume = false;
-        volumeTrack.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-            seekingVolume = true;
-            volFromTrackEvent(e);
-        });
-
-        function volFromTrackEvent(e) {
-            const pct = getPctFromEvent(e, volumeTrack);
-            setVolume(pct);
-        }
-
-        /* ===== شريط الصوت - Touch ===== */
-        volumeTrack.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-            seekingVolume = true;
-            const touch = e.touches[0];
-            setVolume(getPctFromTouch(touch, volumeTrack));
-        }, { passive: true });
-
-        volumeTrack.addEventListener('touchmove', (e) => {
-            if (!seekingVolume) return;
-            e.stopPropagation();
-            e.preventDefault();
-            const touch = e.touches[0];
-            setVolume(getPctFromTouch(touch, volumeTrack));
-        }, { passive: false });
-
-        volumeTrack.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            seekingVolume = false;
-        });
-
-        /* ===== توسيع شريط الصوت باللمس ===== */
-        volumeIcon.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-        }, { passive: true });
-
-        volumeIcon.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (customVolume.classList.contains('touch-expanded')) {
-                toggleMute();
-            } else {
-                customVolume.classList.add('touch-expanded');
-                clearTimeout(customVolume._touchExpandTimer);
-                customVolume._touchExpandTimer = setTimeout(() => {
-                    customVolume.classList.remove('touch-expanded');
-                }, 3000);
-            }
-        });
-
         document.addEventListener('mousemove', (e) => {
             if (seekingProgress) {
                 applySeekPct(getPctFromEvent(e, progressTrack));
-                updateTooltip(e);
+                updateTooltip(e.clientX);
             } else if (seekingVolume) {
-                volFromTrackEvent(e);
+                volFromClientX(e.clientX);
             }
         });
 
@@ -1532,8 +1355,115 @@
         });
 
         progressTrack.addEventListener('mousemove', (e) => {
-            updateTooltip(e);
+            updateTooltip(e.clientX);
         });
+
+        /* ===== شريط التقدم - لمس ===== */
+        let touchSeekingProgress = false;
+
+        progressTrack.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            touchSeekingProgress = true;
+            progressTrack.classList.add('dragging');
+            const touch = e.touches[0];
+            applySeekPct(getPctFromTouch(touch, progressTrack));
+            updateTooltip(touch.clientX);
+            showControls();
+        }, { passive: false });
+
+        progressTrack.addEventListener('touchmove', (e) => {
+            if (!touchSeekingProgress) return;
+            e.stopPropagation();
+            e.preventDefault();
+            const touch = e.touches[0];
+            applySeekPct(getPctFromTouch(touch, progressTrack));
+            updateTooltip(touch.clientX);
+        }, { passive: false });
+
+        progressTrack.addEventListener('touchend', (e) => {
+            if (!touchSeekingProgress) return;
+            e.stopPropagation();
+            touchSeekingProgress = false;
+            progressTrack.classList.remove('dragging');
+            scheduleHide();
+        }, { passive: true });
+
+        progressTrack.addEventListener('touchcancel', () => {
+            touchSeekingProgress = false;
+            progressTrack.classList.remove('dragging');
+        }, { passive: true });
+
+        /* ===== شريط الصوت - ماوس ===== */
+        let seekingVolume = false;
+
+        function volFromClientX(clientX) {
+            const rect = volumeTrack.getBoundingClientRect();
+            let x = clientX - rect.left;
+            x = Math.max(0, Math.min(x, rect.width));
+            setVolume(x / rect.width);
+        }
+
+        volumeTrack.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            seekingVolume = true;
+            volFromClientX(e.clientX);
+        });
+
+        /* ===== شريط الصوت - لمس ===== */
+        let touchSeekingVolume = false;
+        let volumeTouchExpandTimer = null;
+
+        volumeIcon.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            volumeWrap.classList.add('touch-expanded');
+            clearTimeout(volumeTouchExpandTimer);
+            volumeTouchExpandTimer = setTimeout(() => {
+                volumeWrap.classList.remove('touch-expanded');
+            }, 3000);
+            toggleMute();
+        }, { passive: false });
+
+        volumeTrack.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            touchSeekingVolume = true;
+            volumeTrack.style.height = '6px';
+            const touch = e.touches[0];
+            const rect = volumeTrack.getBoundingClientRect();
+            let x = touch.clientX - rect.left;
+            x = Math.max(0, Math.min(x, rect.width));
+            setVolume(x / rect.width);
+            showControls();
+            clearTimeout(volumeTouchExpandTimer);
+        }, { passive: false });
+
+        volumeTrack.addEventListener('touchmove', (e) => {
+            if (!touchSeekingVolume) return;
+            e.stopPropagation();
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = volumeTrack.getBoundingClientRect();
+            let x = touch.clientX - rect.left;
+            x = Math.max(0, Math.min(x, rect.width));
+            setVolume(x / rect.width);
+        }, { passive: false });
+
+        volumeTrack.addEventListener('touchend', (e) => {
+            if (!touchSeekingVolume) return;
+            e.stopPropagation();
+            touchSeekingVolume = false;
+            volumeTrack.style.height = '';
+            volumeTouchExpandTimer = setTimeout(() => {
+                volumeWrap.classList.remove('touch-expanded');
+            }, 2000);
+        }, { passive: true });
+
+        volumeTrack.addEventListener('touchcancel', () => {
+            touchSeekingVolume = false;
+            volumeTrack.style.height = '';
+        }, { passive: true });
 
         videoElement.addEventListener('timeupdate', updateProgressBar);
         videoElement.addEventListener('progress', updateBuffered);
@@ -1605,53 +1535,69 @@
             updateProgressBar();
         }
 
-        /* ===== النقر المزدوج للتخطي (لمس) ===== */
-        let doubleTapLeftTimer = null;
-        let doubleTapRightTimer = null;
-        let doubleTapLeftCount = 0;
-        let doubleTapRightCount = 0;
+        /* ===== دعم الضغط المزدوج باللمس للتقديم/التأخير ===== */
+        let tapCount = 0;
+        let tapTimer = null;
+        let tapSide  = null;
+        const TAP_DELAY = 300;
 
-        touchSeekLeft.addEventListener('touchend', (e) => {
-            e.stopPropagation();
+        wrapper.addEventListener('touchstart', (e) => {
+            const target = e.target;
+            const isOnControls =
+                target.closest('.custom-controls') ||
+                target.closest('.cvp-settings-corner') ||
+                target.closest('.seek-flash');
+
+            if (isOnControls) return;
+
             e.preventDefault();
-            doubleTapLeftCount++;
-            clearTimeout(doubleTapLeftTimer);
-            doubleTapLeftTimer = setTimeout(() => {
-                if (doubleTapLeftCount >= 2) {
-                    seekBy(-5 * Math.floor(doubleTapLeftCount / 1));
-                }
-                doubleTapLeftCount = 0;
-            }, 300);
-        });
 
-        touchSeekRight.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            doubleTapRightCount++;
-            clearTimeout(doubleTapRightTimer);
-            doubleTapRightTimer = setTimeout(() => {
-                if (doubleTapRightCount >= 2) {
-                    seekBy(5 * Math.floor(doubleTapRightCount / 1));
-                }
-                doubleTapRightCount = 0;
-            }, 300);
-        });
+            const touch  = e.touches[0];
+            const rect   = wrapper.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+            const side   = touchX < rect.width / 2 ? 'left' : 'right';
 
-        /* ===== النقر الأحادي على الفيديو للتشغيل/الإيقاف (لمس) ===== */
-        let singleTapTimer = null;
-        videoElement.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            clearTimeout(singleTapTimer);
-            singleTapTimer = setTimeout(() => {
-                if (!wrapper.classList.contains('controls-visible')) {
-                    showControls();
-                    scheduleHide();
+            if (tapCount === 1 && tapSide === side) {
+                clearTimeout(tapTimer);
+                tapCount = 0;
+                tapSide  = null;
+
+                const wasPaused = videoElement.paused;
+
+                if (side === 'right') {
+                    seekBy(5);
                 } else {
-                    playPause();
+                    seekBy(-5);
                 }
-            }, 200);
-        });
 
+                /* الحفاظ على حالة التشغيل */
+                if (!wasPaused && videoElement.paused) {
+                    videoElement.play();
+                }
+
+                /* ===== إظهار عناصر التحكم إذا كان الفيديو يعمل ===== */
+                showControls();
+                if (!videoElement.paused) {
+                    scheduleHide();
+                }
+
+            } else {
+                tapCount = 1;
+                tapSide  = side;
+                clearTimeout(tapTimer);
+                tapTimer = setTimeout(() => {
+                    if (tapCount === 1) {
+                        playPause();
+                        showControls();
+                        updateControlsVisibility();
+                    }
+                    tapCount = 0;
+                    tapSide  = null;
+                }, TAP_DELAY);
+            }
+        }, { passive: false });
+
+        /* ===== لوحة المفاتيح ===== */
         wrapper.setAttribute('tabindex', '0');
         wrapper.addEventListener('keydown', (e) => {
             switch (e.key) {
@@ -1719,35 +1665,16 @@
                 toggleScanBtn.classList.add('active');
             }
         });
-        toggleScanBtn.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (scanlineDiv.style.display === 'block') {
-                scanlineDiv.style.display = 'none';
-                toggleScanBtn.classList.remove('active');
-            } else {
-                scanlineDiv.style.display = 'block';
-                toggleScanBtn.classList.add('active');
-            }
-        });
 
         scanlineDiv.addEventListener('click', (e) => {
             e.stopPropagation();
             playPause();
         });
-        scanlineDiv.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            playPause();
-        });
 
         videoElement.addEventListener('click', (e) => { e.stopPropagation(); playPause(); });
         playBtn.addEventListener('click', (e) => { e.stopPropagation(); playPause(); });
-        playBtn.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); playPause(); });
         restartBtn.addEventListener('click', (e) => { e.stopPropagation(); restartVideo(); });
-        restartBtn.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); restartVideo(); });
         fullscreenBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFullscreen(); });
-        fullscreenBtn.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); toggleFullscreen(); });
 
         videoElement.addEventListener('play',  () => { updatePlayButton(); updateControlsVisibility(); });
         videoElement.addEventListener('pause', () => { updatePlayButton(); updateControlsVisibility(); });
