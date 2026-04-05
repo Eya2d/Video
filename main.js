@@ -1,89 +1,121 @@
+// main.js
+
 // استخراج اسم الفيديو من الرابط
 function getVideoName(url) {
-  return url.split("/").pop().split(".")[0];
+    const fileName = url.split('/').pop();
+    const nameWithoutExt = fileName.replace('.mp4', '');
+    return nameWithoutExt;
 }
 
-// استخراج صورة مصغرة من الفيديو
-function generateThumbnail(videoUrl) {
-  return new Promise((resolve) => {
-    const video = document.createElement("video");
-    video.src = videoUrl;
-    video.crossOrigin = "anonymous";
-    video.currentTime = 1;
+// استخراج رابط الصورة المصغرة (للمثال نستخدم خدمة خارجية، لكن يمكن تعديلها حسب احتياجك)
+// ملاحظة: استخراج صورة حقيقية من ملف MP4 يحتاج إلى معالجة من الخادم.
+// هنا سنستخدم رابط وهمي مع اسم الفيديو، أو يمكنك رفع صورة لكل فيديو.
+function getThumbnailUrl(videoUrl, videoName) {
+    // في التطبيق الحقيقي، يمكن استدعاء API لاستخراج لقطة من الفيديو.
+    // لكن للعرض: سنستخدم خدمة placeholder أو صورة افتراضية.
+    return `https://img.youtube.com/vi/${btoa(videoName)}/0.jpg`; // مجرد مثال توضيحي
+    // الحل الأفضل: استخدام واجهة خلفية تقوم باستخراج الإطار الأول من الفيديو.
+    // لكن هنا سنعرض صورة افتراضية.
+}
 
-    video.addEventListener("loadeddata", () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = 320;
-      canvas.height = 180;
-
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      resolve(canvas.toDataURL("image/png"));
+// عرض الفيديوهات في الصفحة الرئيسية
+function displayVideos(videos) {
+    const videosContainer = document.getElementById('videosContainer');
+    if (!videosContainer) return;
+    
+    videosContainer.innerHTML = '';
+    
+    videos.forEach(video => {
+        const videoName = getVideoName(video.url);
+        const thumbnailUrl = getThumbnailUrl(video.url, videoName);
+        
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        
+        const img = document.createElement('img');
+        img.src = thumbnailUrl;
+        img.alt = videoName;
+        img.loading = 'lazy';
+        
+        const title = document.createElement('h3');
+        title.textContent = videoName;
+        
+        videoCard.appendChild(img);
+        videoCard.appendChild(title);
+        
+        // عند النقر على البطاقة، نذهب لصفحة العرض مع تمرير الرابط
+        videoCard.addEventListener('click', () => {
+            window.location.href = `player.html?video=${encodeURIComponent(video.url)}`;
+        });
+        
+        videosContainer.appendChild(videoCard);
     });
-  });
 }
 
-// عرض الفيديوهات
-async function renderVideos(list) {
-  const container = document.getElementById("videos");
-  container.innerHTML = "";
-
-  for (let vid of list) {
-    const name = getVideoName(vid.url);
-    const thumb = await generateThumbnail(vid.url);
-
-    const div = document.createElement("div");
-    div.className = "video-card";
-
-    div.innerHTML = `
-      <img src="${thumb}">
-      <p>${name}</p>
-    `;
-
-    div.onclick = () => {
-      window.location.href = `watch.html?video=${encodeURIComponent(vid.url)}`;
-    };
-
-    container.appendChild(div);
-  }
+// فلترة الفيديوهات حسب البحث
+function filterVideos(searchTerm) {
+    const filtered = videosData.filter(video => {
+        const name = getVideoName(video.url);
+        return name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+    displayVideos(filtered);
 }
 
-// البحث
-function setupSearch() {
-  const input = document.getElementById("search");
-
-  input.addEventListener("input", () => {
-    const value = input.value.toLowerCase();
-
-    const filtered = videos.filter(v =>
-      getVideoName(v.url).toLowerCase().includes(value)
-    );
-
-    renderVideos(filtered);
-  });
+// تهيئة الصفحة الرئيسية
+function initHomePage() {
+    displayVideos(videosData);
+    
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            filterVideos(e.target.value);
+        });
+    }
 }
 
-// تشغيل الفيديو في صفحة المشاهدة
-function loadVideoPlayer() {
-  const params = new URLSearchParams(window.location.search);
-  const videoUrl = params.get("video");
-
-  if (videoUrl) {
-    const video = document.getElementById("player");
-    const link = document.getElementById("videoLink");
-
-    video.src = videoUrl;
-    link.value = window.location.href;
-  }
+// تهيئة صفحة المشغل
+function initPlayerPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoUrl = urlParams.get('video');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const videoTitle = document.getElementById('videoTitle');
+    const shareLinkInput = document.getElementById('shareLink');
+    const copyBtn = document.getElementById('copyBtn');
+    
+    if (!videoUrl) {
+        document.body.innerHTML = '<h1>خطأ: لم يتم تحديد فيديو</h1><a href="index.html">العودة للرئيسية</a>';
+        return;
+    }
+    
+    const videoName = getVideoName(videoUrl);
+    
+    if (videoPlayer) {
+        videoPlayer.src = videoUrl;
+        videoPlayer.controls = true;
+    }
+    
+    if (videoTitle) {
+        videoTitle.textContent = videoName;
+    }
+    
+    // عرض رابط المشاركة (الرابط الحالي)
+    if (shareLinkInput) {
+        shareLinkInput.value = window.location.href;
+    }
+    
+    // نسخ الرابط
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+            shareLinkInput.select();
+            document.execCommand('copy');
+            alert('تم نسخ الرابط بنجاح!');
+        });
+    }
 }
 
-// تشغيل حسب الصفحة
-if (document.getElementById("videos")) {
-  renderVideos(videos);
-  setupSearch();
-}
-
-if (document.getElementById("player")) {
-  loadVideoPlayer();
+// تشغيل التهيئة المناسبة حسب الصفحة
+if (document.getElementById('videosContainer')) {
+    initHomePage();
+} else if (document.getElementById('videoPlayer')) {
+    initPlayerPage();
 }
