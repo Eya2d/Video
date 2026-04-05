@@ -7,11 +7,12 @@
             box-shadow: none;
         }
         .dideofullscreen .custom-volume {
-            margin-left: 15px;
-            margin-right: 15px;
+            margin-left: 15px !important;
+            margin-right: 15px !important;
         }
         .dideofullscreen .custom-buttons {
             gap: 15px;
+            display: flex !important;
         }
         .dideofullscreen .custom-buttons button {
             height: 34px;
@@ -100,6 +101,15 @@
         }
         .dideofullscreen  {
             
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          .custom-buttons {
+            display: none !important;
+          }
+          .custom-volume {
+            margin-left: 0 !important;
+          }
         }
 
         .custom-video-wrapper {
