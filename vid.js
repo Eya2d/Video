@@ -99,8 +99,11 @@
             flex-direction: column;
             align-items: flex-end;
         }
-        .dideofullscreen  {
-            
+        .dideofullscreen .custom-volume:hover {
+            width: 120px !important;
+        }
+        .dideofullscreen .custom-volume.touch-expanded {
+            width: 120px !important;
         }
 
         @media (hover: none) and (pointer: coarse) {
@@ -109,6 +112,12 @@
           }
           .custom-volume {
             margin-left: 0 !important;
+          }
+          .custom-volume.touch-expanded {
+            width: 28px !important;
+          }
+          .custom-volume:hover {
+            width: 28px !important;
           }
         }
 
