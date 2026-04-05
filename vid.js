@@ -784,6 +784,7 @@
 
     const SPEED_OPTIONS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
     const DEFAULT_SPEED = 1;
+
     const ANIM_DURATION = 180;
 
     function isMobileDevice() {
@@ -875,8 +876,12 @@
         let backdropEl    = null;
         let isAnimating   = false;
 
-        // علامة: هل تم إغلاق القائمة للتو؟ (لمنع تشغيل/إيقاف الفيديو بعدها مباشرة)
-        let menuJustClosed = false;
+        /*
+         * ── متغير الحماية من تشغيل/إيقاف الفيديو بعد إغلاق القائمة ──
+         * عند إغلاق القائمة بالنقر خارجها يُضبط هذا العلَم لفترة قصيرة
+         * حتى لا يُنفَّذ playPause بسبب نفس النقرة.
+         */
+        let justClosedMenu = false;
 
         function getSpeedLabel(s) {
             return s === 1 ? 'عادي' : s + 'x';
@@ -943,15 +948,38 @@
         function createBackdrop() {
             const bd = document.createElement('div');
             bd.className = 'cvp-backdrop';
+
+            /*
+             * عند الضغط على الـ backdrop (خارج القائمة):
+             * - نوقف انتشار الحدث لمنع وصوله لـ videoElement أو wrapper
+             * - نضبط justClosedMenu لمنع playPause من التنفيذ
+             * - نغلق القائمة
+             */
             bd.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
+                e.preventDefault();
+                justClosedMenu = true;
                 closeAll();
+                // نُزيل العلَم بعد دورة أحداث كاملة
+                setTimeout(() => { justClosedMenu = false; }, 300);
             });
+
+            bd.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+            });
+
             bd.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
-                // نغلق القائمة ونضع العلامة
+                justClosedMenu = true;
                 closeAll();
+                setTimeout(() => { justClosedMenu = false; }, 300);
             }, { passive: true });
+
+            bd.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
+
             return bd;
         }
 
@@ -963,6 +991,7 @@
             settingsCorner.appendChild(menuEl);
             activeMenuEl = menuEl;
             settingsBtn.classList.add('open');
+            // إخفاء شريط التحكم عند فتح الإعدادات
             wrapper.classList.add('settings-open');
         }
 
@@ -1010,10 +1039,8 @@
             settingsBtn.classList.remove('open');
             unmountCurrent();
             unmountBackdrop();
+            // إظهار شريط التحكم عند إغلاق الإعدادات
             wrapper.classList.remove('settings-open');
-            // نضع العلامة: القائمة أُغلقت للتو
-            menuJustClosed = true;
-            setTimeout(() => { menuJustClosed = false; }, 350);
         }
 
         settingsBtn.addEventListener('click', (e) => {
@@ -1025,9 +1052,15 @@
             }
         });
 
+        /*
+         * النقر خارج الـ wrapper يُغلق القائمة أيضاً
+         * (الحالة التي يكون فيها المستخدم خارج مساحة الفيديو كلياً)
+         */
         document.addEventListener('mousedown', (e) => {
             if (activeMenuEl && !wrapper.contains(e.target)) {
+                justClosedMenu = true;
                 closeAll();
+                setTimeout(() => { justClosedMenu = false; }, 300);
             }
         });
 
@@ -1241,6 +1274,8 @@
 
         /* إدارة ظهور عناصر التحكم */
         let hideTimeout = null;
+
+        // متغير لتتبع ما إذا كانت أدوات التحكم مرئية على الهاتف
         let mobileControlsVisible = false;
 
         function showControls() {
@@ -1508,6 +1543,9 @@
             });
         }
         function playPause() {
+            // ── حماية: لا تُنفِّذ playPause إذا تم إغلاق القائمة للتو ──
+            if (justClosedMenu) return;
+
             if (videoElement.paused) {
                 pauseOthers();
                 videoElement.play();
@@ -1524,7 +1562,7 @@
             showCenterIcon(false);
         }
 
-        /* ===== نظام تراكم الـ seek ===== */
+        /* ===== نظام تراكم الـ seek (السهام واللمس) ===== */
         let seekAccumLeft  = 0;
         let seekAccumRight = 0;
         let seekResetTimerLeft  = null;
@@ -1536,6 +1574,7 @@
             const label = side === 'left' ? '-' : '+';
             el.querySelector('span').textContent = label + seconds + 's';
             el.classList.add('show');
+
             if (side === 'left') {
                 clearTimeout(flashLeft._hideTimer);
                 flashLeft._hideTimer = setTimeout(() => el.classList.remove('show'), 800);
@@ -1547,6 +1586,7 @@
 
         function seekBy(seconds) {
             const side = seconds < 0 ? 'left' : 'right';
+
             if (side === 'left') {
                 clearTimeout(seekResetTimerLeft);
                 seekAccumLeft += Math.abs(seconds);
@@ -1560,6 +1600,7 @@
                 showFlash('right', seekAccumRight);
                 seekResetTimerRight = setTimeout(() => { seekAccumRight = 0; }, SEEK_RESET_DELAY);
             }
+
             updateProgressBar();
         }
 
@@ -1638,25 +1679,20 @@
 
             e.preventDefault();
 
-            // إذا كانت القائمة مفتوحة → أغلقها فقط، لا تشغيل/إيقاف
-            if (activeMenuEl) {
-                closeAll();
-                touchMoved       = false;
-                touchIsScrolling = false;
-                return;
-            }
-
-            // إذا أُغلقت القائمة للتو → تجاهل هذه اللمسة
-            if (menuJustClosed) {
-                touchMoved       = false;
-                touchIsScrolling = false;
-                return;
-            }
-
             // إذا كانت أدوات التحكم مخفية → أظهرها فقط
             if (!mobileControlsVisible) {
                 showControls();
                 scheduleHide();
+                touchMoved       = false;
+                touchIsScrolling = false;
+                return;
+            }
+
+            // إذا كانت قائمة الإعدادات مفتوحة → أغلقها فقط دون تشغيل/إيقاف
+            if (activeMenuEl) {
+                justClosedMenu = true;
+                closeAll();
+                setTimeout(() => { justClosedMenu = false; }, 300);
                 touchMoved       = false;
                 touchIsScrolling = false;
                 return;
@@ -1788,8 +1824,6 @@
         videoElement.addEventListener('click', (e) => {
             if (!isMobileDevice()) {
                 e.stopPropagation();
-                // على سطح المكتب أيضاً نتحقق من menuJustClosed
-                if (menuJustClosed) return;
                 playPause();
             }
         });
