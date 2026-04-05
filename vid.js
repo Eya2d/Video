@@ -367,7 +367,7 @@
         video::-webkit-media-controls { display: none !important; }
 
         @media (max-width: 600px) {
-            .custom-buttons button { font-size: 12px; }
+            .custom-buttons button { /*padding: 5px 8px;*/ font-size: 12px; }
         }
         .ccvvvvf00f {
             position: relative;
@@ -769,7 +769,7 @@
     const SVG_SAVE_INACTIVE = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M352 48H160a48 48 0 00-48 48v368l144-128 144 128V96a48 48 0 00-48-48z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" style="stroke-width: 38px;"/></svg>`;
     const SVG_SAVE_ACTIVE   = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M400 480a16 16 0 01-10.63-4L256 357.41 122.63 476A16 16 0 0196 464V96a64.07 64.07 0 0164-64h192a64.07 64.07 0 0164 64v368a16 16 0 01-16 16z"/></svg>`;
 
-    const SVG_SETTINGS = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><circle cx="256" cy="256" r="48" style="fill: #ffffff00;"/><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
+    const SVG_SETTINGS = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><circle cx="256" cy="256" r="48"/><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
 
     const SVG_SPEED = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48C141.13 48 48 141.13 48 256s93.13 208 208 208 208-93.13 208-208S370.87 48 256 48zm0 375.08a167.08 167.08 0 110-334.16 167.08 167.08 0 010 334.16z"/><path d="M256 128a16 16 0 000 32 96 96 0 11-96 96 16 16 0 00-32 0 128 128 0 10128-128zM280 234.67V144a16 16 0 00-32 0v96a16 16 0 008 13.86l48 27.71a16 16 0 1016-27.71z"/></svg>`;
 
@@ -1469,7 +1469,7 @@
             }
         }
 
-        /* ===== أيقونة الصوت - نقر بالماوس لإيقاف/تشغيل الصوت ===== */
+        /* ===== النقر على أيقونة الصوت بالماوس لإيقاف/تشغيل الصوت ===== */
         volumeIcon.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleMute();
@@ -1517,26 +1517,23 @@
             updateProgressBar();
         }
 
-        /* ===== منطقة اللمس الرئيسية فوق الفيديو ===== */
-        /*
-         * المنطق:
-         * - touchstart: تسجيل نقطة البداية وتحديد إذا كانت حركة scroll أو tap/double-tap
-         * - touchmove: إذا تجاوزت الحركة عمودياً ≥ 8px → scroll (نترك المتصفح يتحكم)
-         *              إذا تجاوزت أفقياً فقط → نمنع الـ scroll
-         * - touchend: إذا لم تكن scroll → نحكم: tap واحد = play/pause، tap مزدوج = seek
-         */
-
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchStartTime = 0;
-        let touchScrollDecided = false; // هل قررنا إنها scroll؟
-        let touchIsScroll = false;      // هل هي scroll فعلاً؟
-
-        // للـ double tap
-        let tapCount = 0;
-        let tapTimer = null;
-        let tapSide  = null;
+        /* ===================================================================
+           منطقة اللمس فوق الفيديو:
+           - سحب عمودي  → تمرير الصفحة (scroll)
+           - نقرة واحدة → تشغيل / إيقاف
+           - نقرتان سريعتان على اليمين → تقديم 5 ثوانٍ
+           - نقرتان سريعتان على اليسار → تأخير 5 ثوانٍ
+        =================================================================== */
+        let tapCount    = 0;
+        let tapTimer    = null;
+        let tapSide     = null;
         const TAP_DELAY = 300;
+
+        // متغيرات تتبع اللمس لتمييز السحب من النقر
+        let touchStartY    = 0;
+        let touchStartX    = 0;
+        let touchMoved     = false;
+        const MOVE_THRESHOLD = 8; // بكسل — إذا تحرك أكثر من هذا يُعتبر سحباً
 
         wrapper.addEventListener('touchstart', (e) => {
             const target = e.target;
@@ -1547,15 +1544,12 @@
 
             if (isOnControls) return;
 
-            // تسجيل نقطة البداية
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            touchStartTime = Date.now();
-            touchScrollDecided = false;
-            touchIsScroll = false;
+            // حفظ نقطة البداية لتحديد إذا كان المستخدم يسحب
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+            touchMoved  = false;
 
-            // لا نمنع الحدث هنا حتى نعرف اتجاه الحركة
+            // لا نمنع الحدث هنا حتى يتمكن المتصفح من الاسكرول إذا سحب
         }, { passive: true });
 
         wrapper.addEventListener('touchmove', (e) => {
@@ -1567,25 +1561,15 @@
 
             if (isOnControls) return;
 
-            if (!touchScrollDecided) {
-                const touch = e.touches[0];
-                const dx = Math.abs(touch.clientX - touchStartX);
-                const dy = Math.abs(touch.clientY - touchStartY);
+            const dy = Math.abs(e.touches[0].clientY - touchStartY);
+            const dx = Math.abs(e.touches[0].clientX - touchStartX);
 
-                if (dy >= 8 || dx >= 8) {
-                    touchScrollDecided = true;
-                    // إذا الحركة عمودية أكثر → scroll
-                    touchIsScroll = dy >= dx;
-                }
+            if (dy > MOVE_THRESHOLD || dx > MOVE_THRESHOLD) {
+                touchMoved = true;
+                // إذا كانت الحركة رأسية أساساً → اسكرول طبيعي، لا نمنع
+                // إذا كانت أفقية → لا نمنع أيضاً (تبقى حرية كاملة للمتصفح)
             }
-
-            // إذا لم تكن scroll أفقية أو قررنا أنها ليست scroll → نسمح للمتصفح
-            // إذا كانت scroll عمودية → لا نمنع (passive:true يتيح ذلك)
-            // إذا كانت ليست scroll → نمنع لتفادي حركة غير مرغوبة
-            if (touchScrollDecided && !touchIsScroll) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+        }, { passive: true });
 
         wrapper.addEventListener('touchend', (e) => {
             const target = e.target;
@@ -1596,51 +1580,46 @@
 
             if (isOnControls) return;
 
-            // إذا كانت scroll → تجاهل
-            if (touchIsScroll) return;
+            // إذا تحرك الإصبع (سحب) → تجاهل تماماً ولا تفعل شيئاً
+            if (touchMoved) {
+                touchMoved = false;
+                return;
+            }
 
-            // إذا كانت حركة أفقية كبيرة → تجاهل
-            const touch = e.changedTouches[0];
-            const dx = Math.abs(touch.clientX - touchStartX);
-            const dy = Math.abs(touch.clientY - touchStartY);
-            if (dx > 10 || dy > 10) return;
+            touchMoved = false;
 
-            e.preventDefault();
-
+            // نقرة حقيقية — نحدد الجانب
+            const touch  = e.changedTouches[0];
             const rect   = wrapper.getBoundingClientRect();
             const touchX = touch.clientX - rect.left;
             const side   = touchX < rect.width / 2 ? 'left' : 'right';
 
             if (tapCount === 1 && tapSide === side) {
-                // double tap
+                // نقرة مزدوجة على نفس الجانب → تقديم/تأخير
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 tapSide  = null;
 
                 const wasPaused = videoElement.paused;
-
                 if (side === 'right') {
                     seekBy(5);
                 } else {
                     seekBy(-5);
                 }
-
                 if (!wasPaused && videoElement.paused) {
                     videoElement.play();
                 }
-
                 showControls();
-                if (!videoElement.paused) {
-                    scheduleHide();
-                }
+                if (!videoElement.paused) scheduleHide();
 
             } else {
-                // single tap (سيُنفَّذ بعد TAP_DELAY إذا لم يأتِ tap ثانٍ)
+                // نقرة أولى → ننتظر لمعرفة إذا كانت مزدوجة
                 tapCount = 1;
                 tapSide  = side;
                 clearTimeout(tapTimer);
                 tapTimer = setTimeout(() => {
                     if (tapCount === 1) {
+                        // نقرة واحدة مؤكدة → تشغيل/إيقاف
                         playPause();
                         showControls();
                         updateControlsVisibility();
@@ -1649,11 +1628,6 @@
                     tapSide  = null;
                 }, TAP_DELAY);
             }
-        }, { passive: false });
-
-        wrapper.addEventListener('touchcancel', () => {
-            touchScrollDecided = false;
-            touchIsScroll = false;
         }, { passive: true });
 
         /* ===== لوحة المفاتيح ===== */
@@ -1695,9 +1669,6 @@
             }
         });
 
-        /* ===== النقر بالماوس على الفيديو للتشغيل/الإيقاف ===== */
-        videoElement.addEventListener('click', (e) => { e.stopPropagation(); playPause(); });
-
         function updateFullscreenButton() {
             fullscreenBtn.innerHTML = document.fullscreenElement ? SVG_FULLSCREEN_EXIT : SVG_FULLSCREEN_ENTER;
         }
@@ -1733,6 +1704,7 @@
             playPause();
         });
 
+        videoElement.addEventListener('click', (e) => { e.stopPropagation(); playPause(); });
         playBtn.addEventListener('click', (e) => { e.stopPropagation(); playPause(); });
         restartBtn.addEventListener('click', (e) => { e.stopPropagation(); restartVideo(); });
         fullscreenBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFullscreen(); });
