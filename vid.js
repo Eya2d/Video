@@ -367,7 +367,7 @@
         video::-webkit-media-controls { display: none !important; }
 
         @media (max-width: 600px) {
-            .custom-buttons button { font-size: 12px; }
+            .custom-buttons button { /*padding: 5px 8px;*/ font-size: 12px; }
         }
         .ccvvvvf00f {
             position: relative;
@@ -769,7 +769,7 @@
     const SVG_SAVE_INACTIVE = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M352 48H160a48 48 0 00-48 48v368l144-128 144 128V96a48 48 0 00-48-48z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" style="stroke-width: 38px;"/></svg>`;
     const SVG_SAVE_ACTIVE   = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M400 480a16 16 0 01-10.63-4L256 357.41 122.63 476A16 16 0 0196 464V96a64.07 64.07 0 0164-64h192a64.07 64.07 0 0164 64v368a16 16 0 01-16 16z"/></svg>`;
 
-    const SVG_SETTINGS = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><circle cx="256" cy="256" r="48"/><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
+    const SVG_SETTINGS = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><circle cx="256" cy="256" r="48" style="&#10;    fill: #ffffff00;&#10;"/><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
 
     const SVG_SPEED = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48C141.13 48 48 141.13 48 256s93.13 208 208 208 208-93.13 208-208S370.87 48 256 48zm0 375.08a167.08 167.08 0 110-334.16 167.08 167.08 0 010 334.16z"/><path d="M256 128a16 16 0 000 32 96 96 0 11-96 96 16 16 0 00-32 0 128 128 0 10128-128zM280 234.67V144a16 16 0 00-32 0v96a16 16 0 008 13.86l48 27.71a16 16 0 1016-27.71z"/></svg>`;
 
@@ -781,6 +781,11 @@
     const DEFAULT_SPEED = 1;
 
     const ANIM_DURATION = 180;
+
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+            || (navigator.maxTouchPoints > 1);
+    }
 
     function formatTime(s) {
         if (isNaN(s)) return '0:00';
@@ -1395,16 +1400,19 @@
         let touchSeekingVolume = false;
         let volumeTouchExpandTimer = null;
 
-        volumeIcon.addEventListener('touchstart', (e) => {
+        // ── أيقونة الصوت: على الهاتف نستخدم click فقط (وليس touchstart) ──
+        volumeIcon.addEventListener('click', (e) => {
             e.stopPropagation();
-            e.preventDefault();
-            volumeWrap.classList.add('touch-expanded');
-            clearTimeout(volumeTouchExpandTimer);
-            volumeTouchExpandTimer = setTimeout(() => {
-                volumeWrap.classList.remove('touch-expanded');
-            }, 3000);
+            if (isMobileDevice()) {
+                // توسيع شريط الصوت عند النقر
+                volumeWrap.classList.add('touch-expanded');
+                clearTimeout(volumeTouchExpandTimer);
+                volumeTouchExpandTimer = setTimeout(() => {
+                    volumeWrap.classList.remove('touch-expanded');
+                }, 3000);
+            }
             toggleMute();
-        }, { passive: false });
+        });
 
         volumeTrack.addEventListener('touchstart', (e) => {
             e.stopPropagation();
@@ -1469,12 +1477,6 @@
             }
         }
 
-        /* ===== كتم/تفعيل الصوت بالنقر (click) على أيقونة الصوت ===== */
-        volumeIcon.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMute();
-        });
-
         function updatePlayButton() {
             playBtn.innerHTML = videoElement.paused ? SVG_PLAY : SVG_PAUSE;
         }
@@ -1518,22 +1520,26 @@
         }
 
         /* =========================================================
-           منطقة اللمس الرئيسية على الفيديو
-           - السحب العمودي: تمرير الصفحة (scroll)
-           - النقر المفرد: تشغيل/إيقاف
-           - النقر المزدوج على جانب: تقديم/تأخير 5 ثوانٍ
+           منطق اللمس على الهاتف - مُعاد كتابته بالكامل
+           =========================================================
+           المنطق:
+           - touchstart: نسجّل موضع البداية ولا نفعل شيئاً بعد
+           - touchmove: إذا تحرّك الإصبع عمودياً بما يكفي → scroll عادي (نلغي التتبع)
+                        إذا تحرّك أفقياً بما يكفي → نعتبره سحباً (نمنع الscroll)
+           - touchend:  إذا لم يتحرك الإصبع أبداً (tap) → نُشغّل/نوقف أو نتحقق من double tap
         ========================================================= */
-        const SCROLL_THRESHOLD  = 8;   // بكسل حركة عمودية لتفعيل وضع الـ scroll
-        const TAP_MOVE_MAX      = 10;  // أقصى حركة تُعدّ نقرة
-        const TAP_DELAY         = 300; // ms للتمييز بين نقرة واحدة ومزدوجة
 
-        let touchStartX       = 0;
-        let touchStartY       = 0;
-        let touchMoved        = false;
-        let scrollMode        = false; // هل الإيماءة الحالية scroll؟
-        let tapCount          = 0;
-        let tapTimer          = null;
-        let tapSide           = null;
+        const SCROLL_THRESHOLD = 10;   // بكسل: إذا تحرك أكثر من هذا عمودياً → scroll
+        const TAP_MOVE_LIMIT   = 8;    // بكسل: أقصى حركة تُعتبر tap
+        const TAP_DELAY        = 300;  // مللي ثانية بين النقرتين للـ double tap
+
+        let touchStartX      = 0;
+        let touchStartY      = 0;
+        let touchMoved       = false;    // تحرّك كثيراً؟
+        let touchIsScrolling = false;    // تم تحديده على أنه scroll؟
+        let tapCount         = 0;
+        let tapTimer         = null;
+        let tapSide          = null;
 
         wrapper.addEventListener('touchstart', (e) => {
             const target = e.target;
@@ -1541,43 +1547,47 @@
                 target.closest('.custom-controls') ||
                 target.closest('.cvp-settings-corner') ||
                 target.closest('.seek-flash');
-
             if (isOnControls) return;
 
             const touch = e.touches[0];
-            touchStartX  = touch.clientX;
-            touchStartY  = touch.clientY;
-            touchMoved   = false;
-            scrollMode   = false;
+            touchStartX      = touch.clientX;
+            touchStartY      = touch.clientY;
+            touchMoved       = false;
+            touchIsScrolling = false;
 
-            /* لا نمنع الحدث هنا حتى يتمكن المتصفح من تقييم الـ scroll */
+            // لا نمنع السلوك الافتراضي هنا حتى نعرف اتجاه الحركة
         }, { passive: true });
 
         wrapper.addEventListener('touchmove', (e) => {
             const target = e.target;
             const isOnControls =
                 target.closest('.custom-controls') ||
-                target.closest('.cvp-settings-corner') ||
-                target.closest('.seek-flash');
-
+                target.closest('.cvp-settings-corner');
             if (isOnControls) return;
 
             const touch = e.touches[0];
-            const dx = Math.abs(touch.clientX - touchStartX);
-            const dy = Math.abs(touch.clientY - touchStartY);
+            const dx = touch.clientX - touchStartX;
+            const dy = touch.clientY - touchStartY;
+            const absDx = Math.abs(dx);
+            const absDy = Math.abs(dy);
 
-            if (!touchMoved && (dx > TAP_MOVE_MAX || dy > TAP_MOVE_MAX)) {
+            if (!touchMoved && (absDx > TAP_MOVE_LIMIT || absDy > TAP_MOVE_LIMIT)) {
                 touchMoved = true;
-                /* إذا كانت الحركة رأسية أكثر → scroll */
-                scrollMode = dy > dx;
             }
 
-            /* إذا لم نكن في وضع scroll أفقي، نسمح للصفحة بالتمرير */
-            if (scrollMode) {
-                /* اتركه يمرر بشكل طبيعي - passive: true يكفل ذلك */
-                return;
+            // تحديد ما إذا كانت الحركة للأعلى/الأسفل (scroll) أم أفقية
+            if (!touchIsScrolling) {
+                if (absDy > SCROLL_THRESHOLD && absDy > absDx) {
+                    // حركة عمودية → اسمح بالـ scroll الطبيعي
+                    touchIsScrolling = true;
+                }
             }
-        }, { passive: true });
+
+            // إذا لم يكن scroll عمودي → امنع الـ scroll لمنع الحركة الأفقية من تحريك الصفحة
+            if (!touchIsScrolling) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         wrapper.addEventListener('touchend', (e) => {
             const target = e.target;
@@ -1585,13 +1595,16 @@
                 target.closest('.custom-controls') ||
                 target.closest('.cvp-settings-corner') ||
                 target.closest('.seek-flash');
-
             if (isOnControls) return;
 
-            /* إذا كان المستخدم يمرر الصفحة → تجاهل */
-            if (scrollMode || touchMoved) return;
+            // إذا كان scrolling أو تحرّك كثيراً → تجاهل (لا تشغيل/إيقاف)
+            if (touchIsScrolling || touchMoved) {
+                touchIsScrolling = false;
+                touchMoved = false;
+                return;
+            }
 
-            /* نقرة صحيحة */
+            // هذا tap حقيقي
             e.preventDefault();
 
             const touch  = e.changedTouches[0];
@@ -1600,34 +1613,31 @@
             const side   = touchX < rect.width / 2 ? 'left' : 'right';
 
             if (tapCount === 1 && tapSide === side) {
-                /* نقرة مزدوجة على نفس الجانب → تقديم/تأخير */
+                // double tap → تقديم أو تأخير
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 tapSide  = null;
 
                 const wasPaused = videoElement.paused;
-
                 if (side === 'right') {
                     seekBy(5);
                 } else {
                     seekBy(-5);
                 }
-
                 if (!wasPaused && videoElement.paused) {
                     videoElement.play();
                 }
-
                 showControls();
                 if (!videoElement.paused) scheduleHide();
 
             } else {
-                /* نقرة أولى أو على الجانب الآخر */
+                // single tap → انتظر لتحديد إذا كان double tap
                 tapCount = 1;
                 tapSide  = side;
                 clearTimeout(tapTimer);
                 tapTimer = setTimeout(() => {
                     if (tapCount === 1) {
-                        /* نقرة مفردة → تشغيل/إيقاف */
+                        // single tap مؤكد → تشغيل/إيقاف
                         playPause();
                         showControls();
                         updateControlsVisibility();
@@ -1636,7 +1646,15 @@
                     tapSide  = null;
                 }, TAP_DELAY);
             }
+
+            touchMoved       = false;
+            touchIsScrolling = false;
         }, { passive: false });
+
+        wrapper.addEventListener('touchcancel', () => {
+            touchMoved       = false;
+            touchIsScrolling = false;
+        }, { passive: true });
 
         /* ===== لوحة المفاتيح ===== */
         wrapper.setAttribute('tabindex', '0');
@@ -1712,7 +1730,16 @@
             playPause();
         });
 
-        videoElement.addEventListener('click', (e) => { e.stopPropagation(); playPause(); });
+        // على الهاتف: الفيديو يستجيب فقط للـ click (الذي يُطلق بعد tap قصير)
+        // وليس للـ touchstart مباشرة - هذا مُعالَج في منطق touchend أعلاه
+        videoElement.addEventListener('click', (e) => {
+            // على سطح المكتب فقط
+            if (!isMobileDevice()) {
+                e.stopPropagation();
+                playPause();
+            }
+        });
+
         playBtn.addEventListener('click', (e) => { e.stopPropagation(); playPause(); });
         restartBtn.addEventListener('click', (e) => { e.stopPropagation(); restartVideo(); });
         fullscreenBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFullscreen(); });
