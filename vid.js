@@ -784,7 +784,6 @@
 
     const SPEED_OPTIONS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
     const DEFAULT_SPEED = 1;
-
     const ANIM_DURATION = 180;
 
     function isMobileDevice() {
@@ -876,6 +875,9 @@
         let backdropEl    = null;
         let isAnimating   = false;
 
+        // علامة: هل تم إغلاق القائمة للتو؟ (لمنع تشغيل/إيقاف الفيديو بعدها مباشرة)
+        let menuJustClosed = false;
+
         function getSpeedLabel(s) {
             return s === 1 ? 'عادي' : s + 'x';
         }
@@ -947,6 +949,7 @@
             });
             bd.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
+                // نغلق القائمة ونضع العلامة
                 closeAll();
             }, { passive: true });
             return bd;
@@ -960,7 +963,6 @@
             settingsCorner.appendChild(menuEl);
             activeMenuEl = menuEl;
             settingsBtn.classList.add('open');
-            // إخفاء شريط التحكم عند فتح الإعدادات
             wrapper.classList.add('settings-open');
         }
 
@@ -1008,8 +1010,10 @@
             settingsBtn.classList.remove('open');
             unmountCurrent();
             unmountBackdrop();
-            // إظهار شريط التحكم عند إغلاق الإعدادات
             wrapper.classList.remove('settings-open');
+            // نضع العلامة: القائمة أُغلقت للتو
+            menuJustClosed = true;
+            setTimeout(() => { menuJustClosed = false; }, 350);
         }
 
         settingsBtn.addEventListener('click', (e) => {
@@ -1237,8 +1241,6 @@
 
         /* إدارة ظهور عناصر التحكم */
         let hideTimeout = null;
-
-        // متغير لتتبع ما إذا كانت أدوات التحكم مرئية على الهاتف
         let mobileControlsVisible = false;
 
         function showControls() {
@@ -1522,21 +1524,18 @@
             showCenterIcon(false);
         }
 
-        /* ===== نظام تراكم الـ seek (السهام واللمس) ===== */
-        // متغيرات لتراكم مقدار التقديم/التأخير
-        let seekAccumLeft  = 0;   // مجموع الثواني للجهة اليسرى
-        let seekAccumRight = 0;   // مجموع الثواني للجهة اليمنى
+        /* ===== نظام تراكم الـ seek ===== */
+        let seekAccumLeft  = 0;
+        let seekAccumRight = 0;
         let seekResetTimerLeft  = null;
         let seekResetTimerRight = null;
-        const SEEK_RESET_DELAY  = 1000; // ms بعد آخر ضغطة نعيد العداد
+        const SEEK_RESET_DELAY  = 1000;
 
         function showFlash(side, seconds) {
             const el = side === 'left' ? flashLeft : flashRight;
             const label = side === 'left' ? '-' : '+';
             el.querySelector('span').textContent = label + seconds + 's';
             el.classList.add('show');
-
-            // نلغي أي مؤقت إخفاء سابق لهذه الجهة
             if (side === 'left') {
                 clearTimeout(flashLeft._hideTimer);
                 flashLeft._hideTimer = setTimeout(() => el.classList.remove('show'), 800);
@@ -1548,7 +1547,6 @@
 
         function seekBy(seconds) {
             const side = seconds < 0 ? 'left' : 'right';
-
             if (side === 'left') {
                 clearTimeout(seekResetTimerLeft);
                 seekAccumLeft += Math.abs(seconds);
@@ -1562,14 +1560,11 @@
                 showFlash('right', seekAccumRight);
                 seekResetTimerRight = setTimeout(() => { seekAccumRight = 0; }, SEEK_RESET_DELAY);
             }
-
             updateProgressBar();
         }
 
         /* =========================================================
            منطق اللمس على الهاتف
-           - أول لمسة على الشاشة (عندما تكون الأدوات مخفية): تُظهر الأدوات فقط
-           - اللمسة التالية: تشغيل/إيقاف أو double tap للتقديم/التأخير
         ========================================================= */
 
         const SCROLL_THRESHOLD = 10;
@@ -1643,18 +1638,25 @@
 
             e.preventDefault();
 
-            // إذا كانت أدوات التحكم مخفية → أظهرها فقط ولا تفعل شيئاً آخر
-            if (!mobileControlsVisible) {
-                showControls();
-                scheduleHide();
+            // إذا كانت القائمة مفتوحة → أغلقها فقط، لا تشغيل/إيقاف
+            if (activeMenuEl) {
+                closeAll();
                 touchMoved       = false;
                 touchIsScrolling = false;
                 return;
             }
 
-            // إذا كانت قائمة الإعدادات مفتوحة → أغلقها
-            if (activeMenuEl) {
-                closeAll();
+            // إذا أُغلقت القائمة للتو → تجاهل هذه اللمسة
+            if (menuJustClosed) {
+                touchMoved       = false;
+                touchIsScrolling = false;
+                return;
+            }
+
+            // إذا كانت أدوات التحكم مخفية → أظهرها فقط
+            if (!mobileControlsVisible) {
+                showControls();
+                scheduleHide();
                 touchMoved       = false;
                 touchIsScrolling = false;
                 return;
@@ -1786,6 +1788,8 @@
         videoElement.addEventListener('click', (e) => {
             if (!isMobileDevice()) {
                 e.stopPropagation();
+                // على سطح المكتب أيضاً نتحقق من menuJustClosed
+                if (menuJustClosed) return;
                 playPause();
             }
         });
