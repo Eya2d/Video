@@ -165,6 +165,11 @@
             opacity: 1;
             z-index: 10;
         }
+        .custom-video-wrapper.settings-open .custom-controls {
+            opacity: 0 !important;
+            z-index: -1 !important;
+            pointer-events: none !important;
+        }
         .custom-buttons {
             display: flex;
             justify-content: center;
@@ -367,7 +372,7 @@
         video::-webkit-media-controls { display: none !important; }
 
         @media (max-width: 600px) {
-            .custom-buttons button { /*padding: 5px 8px;*/ font-size: 12px; }
+            .custom-buttons button { font-size: 12px; }
         }
         .ccvvvvf00f {
             position: relative;
@@ -955,6 +960,8 @@
             settingsCorner.appendChild(menuEl);
             activeMenuEl = menuEl;
             settingsBtn.classList.add('open');
+            // إخفاء شريط التحكم عند فتح الإعدادات
+            wrapper.classList.add('settings-open');
         }
 
         function unmountCurrent(callback) {
@@ -1001,6 +1008,8 @@
             settingsBtn.classList.remove('open');
             unmountCurrent();
             unmountBackdrop();
+            // إظهار شريط التحكم عند إغلاق الإعدادات
+            wrapper.classList.remove('settings-open');
         }
 
         settingsBtn.addEventListener('click', (e) => {
@@ -1228,9 +1237,16 @@
 
         /* إدارة ظهور عناصر التحكم */
         let hideTimeout = null;
+
+        // متغير لتتبع ما إذا كانت أدوات التحكم مرئية على الهاتف
+        let mobileControlsVisible = false;
+
         function showControls() {
             wrapper.classList.add('controls-visible');
             wrapper.classList.remove('cursor-hidden');
+            if (isMobileDevice()) {
+                mobileControlsVisible = true;
+            }
         }
         function scheduleHide() {
             clearTimeout(hideTimeout);
@@ -1238,6 +1254,9 @@
                 if (!videoElement.paused) {
                     wrapper.classList.remove('controls-visible');
                     wrapper.classList.add('cursor-hidden');
+                    if (isMobileDevice()) {
+                        mobileControlsVisible = false;
+                    }
                 }
             }, 3000);
         }
@@ -1255,6 +1274,9 @@
                 clearTimeout(hideTimeout);
                 wrapper.classList.remove('controls-visible');
                 wrapper.classList.remove('cursor-hidden');
+                if (isMobileDevice()) {
+                    mobileControlsVisible = false;
+                }
             }
         });
 
@@ -1400,11 +1422,9 @@
         let touchSeekingVolume = false;
         let volumeTouchExpandTimer = null;
 
-        // ── أيقونة الصوت: على الهاتف نستخدم click فقط (وليس touchstart) ──
         volumeIcon.addEventListener('click', (e) => {
             e.stopPropagation();
             if (isMobileDevice()) {
-                // توسيع شريط الصوت عند النقر
                 volumeWrap.classList.add('touch-expanded');
                 clearTimeout(volumeTouchExpandTimer);
                 volumeTouchExpandTimer = setTimeout(() => {
@@ -1502,41 +1522,64 @@
             showCenterIcon(false);
         }
 
-        let flashLeftTimer, flashRightTimer;
+        /* ===== نظام تراكم الـ seek (السهام واللمس) ===== */
+        // متغيرات لتراكم مقدار التقديم/التأخير
+        let seekAccumLeft  = 0;   // مجموع الثواني للجهة اليسرى
+        let seekAccumRight = 0;   // مجموع الثواني للجهة اليمنى
+        let seekResetTimerLeft  = null;
+        let seekResetTimerRight = null;
+        const SEEK_RESET_DELAY  = 1000; // ms بعد آخر ضغطة نعيد العداد
+
         function showFlash(side, seconds) {
-            const el    = side === 'left' ? flashLeft : flashRight;
+            const el = side === 'left' ? flashLeft : flashRight;
             const label = side === 'left' ? '-' : '+';
             el.querySelector('span').textContent = label + seconds + 's';
             el.classList.add('show');
-            clearTimeout(side === 'left' ? flashLeftTimer : flashRightTimer);
-            const t = setTimeout(() => el.classList.remove('show'), 800);
-            if (side === 'left') flashLeftTimer = t; else flashRightTimer = t;
+
+            // نلغي أي مؤقت إخفاء سابق لهذه الجهة
+            if (side === 'left') {
+                clearTimeout(flashLeft._hideTimer);
+                flashLeft._hideTimer = setTimeout(() => el.classList.remove('show'), 800);
+            } else {
+                clearTimeout(flashRight._hideTimer);
+                flashRight._hideTimer = setTimeout(() => el.classList.remove('show'), 800);
+            }
         }
 
         function seekBy(seconds) {
-            videoElement.currentTime = Math.max(0, Math.min(videoElement.duration || 0, videoElement.currentTime + seconds));
-            showFlash(seconds < 0 ? 'left' : 'right', Math.abs(seconds));
+            const side = seconds < 0 ? 'left' : 'right';
+
+            if (side === 'left') {
+                clearTimeout(seekResetTimerLeft);
+                seekAccumLeft += Math.abs(seconds);
+                videoElement.currentTime = Math.max(0, videoElement.currentTime - Math.abs(seconds));
+                showFlash('left', seekAccumLeft);
+                seekResetTimerLeft = setTimeout(() => { seekAccumLeft = 0; }, SEEK_RESET_DELAY);
+            } else {
+                clearTimeout(seekResetTimerRight);
+                seekAccumRight += Math.abs(seconds);
+                videoElement.currentTime = Math.min(videoElement.duration || 0, videoElement.currentTime + Math.abs(seconds));
+                showFlash('right', seekAccumRight);
+                seekResetTimerRight = setTimeout(() => { seekAccumRight = 0; }, SEEK_RESET_DELAY);
+            }
+
             updateProgressBar();
         }
 
         /* =========================================================
-           منطق اللمس على الهاتف - مُعاد كتابته بالكامل
-           =========================================================
-           المنطق:
-           - touchstart: نسجّل موضع البداية ولا نفعل شيئاً بعد
-           - touchmove: إذا تحرّك الإصبع عمودياً بما يكفي → scroll عادي (نلغي التتبع)
-                        إذا تحرّك أفقياً بما يكفي → نعتبره سحباً (نمنع الscroll)
-           - touchend:  إذا لم يتحرك الإصبع أبداً (tap) → نُشغّل/نوقف أو نتحقق من double tap
+           منطق اللمس على الهاتف
+           - أول لمسة على الشاشة (عندما تكون الأدوات مخفية): تُظهر الأدوات فقط
+           - اللمسة التالية: تشغيل/إيقاف أو double tap للتقديم/التأخير
         ========================================================= */
 
-        const SCROLL_THRESHOLD = 10;   // بكسل: إذا تحرك أكثر من هذا عمودياً → scroll
-        const TAP_MOVE_LIMIT   = 8;    // بكسل: أقصى حركة تُعتبر tap
-        const TAP_DELAY        = 300;  // مللي ثانية بين النقرتين للـ double tap
+        const SCROLL_THRESHOLD = 10;
+        const TAP_MOVE_LIMIT   = 8;
+        const TAP_DELAY        = 300;
 
         let touchStartX      = 0;
         let touchStartY      = 0;
-        let touchMoved       = false;    // تحرّك كثيراً؟
-        let touchIsScrolling = false;    // تم تحديده على أنه scroll؟
+        let touchMoved       = false;
+        let touchIsScrolling = false;
         let tapCount         = 0;
         let tapTimer         = null;
         let tapSide          = null;
@@ -1554,8 +1597,6 @@
             touchStartY      = touch.clientY;
             touchMoved       = false;
             touchIsScrolling = false;
-
-            // لا نمنع السلوك الافتراضي هنا حتى نعرف اتجاه الحركة
         }, { passive: true });
 
         wrapper.addEventListener('touchmove', (e) => {
@@ -1575,15 +1616,12 @@
                 touchMoved = true;
             }
 
-            // تحديد ما إذا كانت الحركة للأعلى/الأسفل (scroll) أم أفقية
             if (!touchIsScrolling) {
                 if (absDy > SCROLL_THRESHOLD && absDy > absDx) {
-                    // حركة عمودية → اسمح بالـ scroll الطبيعي
                     touchIsScrolling = true;
                 }
             }
 
-            // إذا لم يكن scroll عمودي → امنع الـ scroll لمنع الحركة الأفقية من تحريك الصفحة
             if (!touchIsScrolling) {
                 e.preventDefault();
             }
@@ -1597,16 +1635,32 @@
                 target.closest('.seek-flash');
             if (isOnControls) return;
 
-            // إذا كان scrolling أو تحرّك كثيراً → تجاهل (لا تشغيل/إيقاف)
             if (touchIsScrolling || touchMoved) {
                 touchIsScrolling = false;
                 touchMoved = false;
                 return;
             }
 
-            // هذا tap حقيقي
             e.preventDefault();
 
+            // إذا كانت أدوات التحكم مخفية → أظهرها فقط ولا تفعل شيئاً آخر
+            if (!mobileControlsVisible) {
+                showControls();
+                scheduleHide();
+                touchMoved       = false;
+                touchIsScrolling = false;
+                return;
+            }
+
+            // إذا كانت قائمة الإعدادات مفتوحة → أغلقها
+            if (activeMenuEl) {
+                closeAll();
+                touchMoved       = false;
+                touchIsScrolling = false;
+                return;
+            }
+
+            // الأدوات مرئية → تشغيل/إيقاف أو double tap
             const touch  = e.changedTouches[0];
             const rect   = wrapper.getBoundingClientRect();
             const touchX = touch.clientX - rect.left;
@@ -1637,7 +1691,6 @@
                 clearTimeout(tapTimer);
                 tapTimer = setTimeout(() => {
                     if (tapCount === 1) {
-                        // single tap مؤكد → تشغيل/إيقاف
                         playPause();
                         showControls();
                         updateControlsVisibility();
@@ -1730,10 +1783,7 @@
             playPause();
         });
 
-        // على الهاتف: الفيديو يستجيب فقط للـ click (الذي يُطلق بعد tap قصير)
-        // وليس للـ touchstart مباشرة - هذا مُعالَج في منطق touchend أعلاه
         videoElement.addEventListener('click', (e) => {
-            // على سطح المكتب فقط
             if (!isMobileDevice()) {
                 e.stopPropagation();
                 playPause();
