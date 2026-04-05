@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>مكتبة الفيديو</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+  text-align: center;
+}
+
+#search {
+  width: 80%;
+  padding: 10px;
+  margin: 20px;
+  font-size: 18px;
+}
+
+#videos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.video-card {
+  width: 200px;
+  cursor: pointer;
+}
+
+.video-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.video-card p {
+  margin-top: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<input id="search" placeholder="ابحث عن فيديو...">
+
+<div id="videos"></div>
+
+<script src="data.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>
