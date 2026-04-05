@@ -876,13 +876,6 @@
         let backdropEl    = null;
         let isAnimating   = false;
 
-        /*
-         * ── متغير الحماية من تشغيل/إيقاف الفيديو بعد إغلاق القائمة ──
-         * عند إغلاق القائمة بالنقر خارجها يُضبط هذا العلَم لفترة قصيرة
-         * حتى لا يُنفَّذ playPause بسبب نفس النقرة.
-         */
-        let justClosedMenu = false;
-
         function getSpeedLabel(s) {
             return s === 1 ? 'عادي' : s + 'x';
         }
@@ -948,38 +941,14 @@
         function createBackdrop() {
             const bd = document.createElement('div');
             bd.className = 'cvp-backdrop';
-
-            /*
-             * عند الضغط على الـ backdrop (خارج القائمة):
-             * - نوقف انتشار الحدث لمنع وصوله لـ videoElement أو wrapper
-             * - نضبط justClosedMenu لمنع playPause من التنفيذ
-             * - نغلق القائمة
-             */
             bd.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
-                e.preventDefault();
-                justClosedMenu = true;
                 closeAll();
-                // نُزيل العلَم بعد دورة أحداث كاملة
-                setTimeout(() => { justClosedMenu = false; }, 300);
             });
-
-            bd.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-            });
-
             bd.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
-                justClosedMenu = true;
                 closeAll();
-                setTimeout(() => { justClosedMenu = false; }, 300);
             }, { passive: true });
-
-            bd.addEventListener('touchend', (e) => {
-                e.stopPropagation();
-            }, { passive: true });
-
             return bd;
         }
 
@@ -1052,15 +1021,9 @@
             }
         });
 
-        /*
-         * النقر خارج الـ wrapper يُغلق القائمة أيضاً
-         * (الحالة التي يكون فيها المستخدم خارج مساحة الفيديو كلياً)
-         */
         document.addEventListener('mousedown', (e) => {
             if (activeMenuEl && !wrapper.contains(e.target)) {
-                justClosedMenu = true;
                 closeAll();
-                setTimeout(() => { justClosedMenu = false; }, 300);
             }
         });
 
@@ -1543,9 +1506,6 @@
             });
         }
         function playPause() {
-            // ── حماية: لا تُنفِّذ playPause إذا تم إغلاق القائمة للتو ──
-            if (justClosedMenu) return;
-
             if (videoElement.paused) {
                 pauseOthers();
                 videoElement.play();
@@ -1563,11 +1523,12 @@
         }
 
         /* ===== نظام تراكم الـ seek (السهام واللمس) ===== */
-        let seekAccumLeft  = 0;
-        let seekAccumRight = 0;
+        // متغيرات لتراكم مقدار التقديم/التأخير
+        let seekAccumLeft  = 0;   // مجموع الثواني للجهة اليسرى
+        let seekAccumRight = 0;   // مجموع الثواني للجهة اليمنى
         let seekResetTimerLeft  = null;
         let seekResetTimerRight = null;
-        const SEEK_RESET_DELAY  = 1000;
+        const SEEK_RESET_DELAY  = 1000; // ms بعد آخر ضغطة نعيد العداد
 
         function showFlash(side, seconds) {
             const el = side === 'left' ? flashLeft : flashRight;
@@ -1575,6 +1536,7 @@
             el.querySelector('span').textContent = label + seconds + 's';
             el.classList.add('show');
 
+            // نلغي أي مؤقت إخفاء سابق لهذه الجهة
             if (side === 'left') {
                 clearTimeout(flashLeft._hideTimer);
                 flashLeft._hideTimer = setTimeout(() => el.classList.remove('show'), 800);
@@ -1606,6 +1568,8 @@
 
         /* =========================================================
            منطق اللمس على الهاتف
+           - أول لمسة على الشاشة (عندما تكون الأدوات مخفية): تُظهر الأدوات فقط
+           - اللمسة التالية: تشغيل/إيقاف أو double tap للتقديم/التأخير
         ========================================================= */
 
         const SCROLL_THRESHOLD = 10;
@@ -1679,7 +1643,7 @@
 
             e.preventDefault();
 
-            // إذا كانت أدوات التحكم مخفية → أظهرها فقط
+            // إذا كانت أدوات التحكم مخفية → أظهرها فقط ولا تفعل شيئاً آخر
             if (!mobileControlsVisible) {
                 showControls();
                 scheduleHide();
@@ -1688,11 +1652,9 @@
                 return;
             }
 
-            // إذا كانت قائمة الإعدادات مفتوحة → أغلقها فقط دون تشغيل/إيقاف
+            // إذا كانت قائمة الإعدادات مفتوحة → أغلقها
             if (activeMenuEl) {
-                justClosedMenu = true;
                 closeAll();
-                setTimeout(() => { justClosedMenu = false; }, 300);
                 touchMoved       = false;
                 touchIsScrolling = false;
                 return;
