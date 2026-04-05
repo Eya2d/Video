@@ -367,7 +367,7 @@
         video::-webkit-media-controls { display: none !important; }
 
         @media (max-width: 600px) {
-            .custom-buttons button { /*padding: 5px 8px;*/ font-size: 12px; }
+            .custom-buttons button { font-size: 12px; }
         }
         .ccvvvvf00f {
             position: relative;
@@ -1469,7 +1469,7 @@
             }
         }
 
-        /* ===== النقر على أيقونة الصوت بالماوس لإيقاف/تشغيل الصوت ===== */
+        /* ===== كتم/تفعيل الصوت بالنقر (click) على أيقونة الصوت ===== */
         volumeIcon.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleMute();
@@ -1517,23 +1517,23 @@
             updateProgressBar();
         }
 
-        /* ===================================================================
-           منطقة اللمس فوق الفيديو:
-           - سحب عمودي  → تمرير الصفحة (scroll)
-           - نقرة واحدة → تشغيل / إيقاف
-           - نقرتان سريعتان على اليمين → تقديم 5 ثوانٍ
-           - نقرتان سريعتان على اليسار → تأخير 5 ثوانٍ
-        =================================================================== */
-        let tapCount    = 0;
-        let tapTimer    = null;
-        let tapSide     = null;
-        const TAP_DELAY = 300;
+        /* =========================================================
+           منطقة اللمس الرئيسية على الفيديو
+           - السحب العمودي: تمرير الصفحة (scroll)
+           - النقر المفرد: تشغيل/إيقاف
+           - النقر المزدوج على جانب: تقديم/تأخير 5 ثوانٍ
+        ========================================================= */
+        const SCROLL_THRESHOLD  = 8;   // بكسل حركة عمودية لتفعيل وضع الـ scroll
+        const TAP_MOVE_MAX      = 10;  // أقصى حركة تُعدّ نقرة
+        const TAP_DELAY         = 300; // ms للتمييز بين نقرة واحدة ومزدوجة
 
-        // متغيرات تتبع اللمس لتمييز السحب من النقر
-        let touchStartY    = 0;
-        let touchStartX    = 0;
-        let touchMoved     = false;
-        const MOVE_THRESHOLD = 8; // بكسل — إذا تحرك أكثر من هذا يُعتبر سحباً
+        let touchStartX       = 0;
+        let touchStartY       = 0;
+        let touchMoved        = false;
+        let scrollMode        = false; // هل الإيماءة الحالية scroll؟
+        let tapCount          = 0;
+        let tapTimer          = null;
+        let tapSide           = null;
 
         wrapper.addEventListener('touchstart', (e) => {
             const target = e.target;
@@ -1544,12 +1544,13 @@
 
             if (isOnControls) return;
 
-            // حفظ نقطة البداية لتحديد إذا كان المستخدم يسحب
-            touchStartY = e.touches[0].clientY;
-            touchStartX = e.touches[0].clientX;
-            touchMoved  = false;
+            const touch = e.touches[0];
+            touchStartX  = touch.clientX;
+            touchStartY  = touch.clientY;
+            touchMoved   = false;
+            scrollMode   = false;
 
-            // لا نمنع الحدث هنا حتى يتمكن المتصفح من الاسكرول إذا سحب
+            /* لا نمنع الحدث هنا حتى يتمكن المتصفح من تقييم الـ scroll */
         }, { passive: true });
 
         wrapper.addEventListener('touchmove', (e) => {
@@ -1561,13 +1562,20 @@
 
             if (isOnControls) return;
 
-            const dy = Math.abs(e.touches[0].clientY - touchStartY);
-            const dx = Math.abs(e.touches[0].clientX - touchStartX);
+            const touch = e.touches[0];
+            const dx = Math.abs(touch.clientX - touchStartX);
+            const dy = Math.abs(touch.clientY - touchStartY);
 
-            if (dy > MOVE_THRESHOLD || dx > MOVE_THRESHOLD) {
+            if (!touchMoved && (dx > TAP_MOVE_MAX || dy > TAP_MOVE_MAX)) {
                 touchMoved = true;
-                // إذا كانت الحركة رأسية أساساً → اسكرول طبيعي، لا نمنع
-                // إذا كانت أفقية → لا نمنع أيضاً (تبقى حرية كاملة للمتصفح)
+                /* إذا كانت الحركة رأسية أكثر → scroll */
+                scrollMode = dy > dx;
+            }
+
+            /* إذا لم نكن في وضع scroll أفقي، نسمح للصفحة بالتمرير */
+            if (scrollMode) {
+                /* اتركه يمرر بشكل طبيعي - passive: true يكفل ذلك */
+                return;
             }
         }, { passive: true });
 
@@ -1580,46 +1588,46 @@
 
             if (isOnControls) return;
 
-            // إذا تحرك الإصبع (سحب) → تجاهل تماماً ولا تفعل شيئاً
-            if (touchMoved) {
-                touchMoved = false;
-                return;
-            }
+            /* إذا كان المستخدم يمرر الصفحة → تجاهل */
+            if (scrollMode || touchMoved) return;
 
-            touchMoved = false;
+            /* نقرة صحيحة */
+            e.preventDefault();
 
-            // نقرة حقيقية — نحدد الجانب
             const touch  = e.changedTouches[0];
             const rect   = wrapper.getBoundingClientRect();
             const touchX = touch.clientX - rect.left;
             const side   = touchX < rect.width / 2 ? 'left' : 'right';
 
             if (tapCount === 1 && tapSide === side) {
-                // نقرة مزدوجة على نفس الجانب → تقديم/تأخير
+                /* نقرة مزدوجة على نفس الجانب → تقديم/تأخير */
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 tapSide  = null;
 
                 const wasPaused = videoElement.paused;
+
                 if (side === 'right') {
                     seekBy(5);
                 } else {
                     seekBy(-5);
                 }
+
                 if (!wasPaused && videoElement.paused) {
                     videoElement.play();
                 }
+
                 showControls();
                 if (!videoElement.paused) scheduleHide();
 
             } else {
-                // نقرة أولى → ننتظر لمعرفة إذا كانت مزدوجة
+                /* نقرة أولى أو على الجانب الآخر */
                 tapCount = 1;
                 tapSide  = side;
                 clearTimeout(tapTimer);
                 tapTimer = setTimeout(() => {
                     if (tapCount === 1) {
-                        // نقرة واحدة مؤكدة → تشغيل/إيقاف
+                        /* نقرة مفردة → تشغيل/إيقاف */
                         playPause();
                         showControls();
                         updateControlsVisibility();
@@ -1628,7 +1636,7 @@
                     tapSide  = null;
                 }, TAP_DELAY);
             }
-        }, { passive: true });
+        }, { passive: false });
 
         /* ===== لوحة المفاتيح ===== */
         wrapper.setAttribute('tabindex', '0');
