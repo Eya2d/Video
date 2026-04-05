@@ -503,7 +503,7 @@
         .xxxxdww {
             height: 100%;
             width: 100%;
-            background-image: url(download.webp);
+            background-image: url(https://github.com/Eya2d/Video/blob/main/download.webp?raw=true);
             background-size: 100% 100%;
         }
         .time, .time1 {
@@ -762,7 +762,7 @@
     const SVG_VOL_ON  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M232 416a23.88 23.88 0 01-14.2-4.68 8.27 8.27 0 01-.66-.51L125.76 336H56a24 24 0 01-24-24V200a24 24 0 0124-24h69.75l91.37-74.81a8.27 8.27 0 01.66-.51A24 24 0 01256 120v272a24 24 0 01-24 24zm-106.18-80zm-.27-159.86zM320 336a16 16 0 01-14.29-23.19c9.49-18.87 14.3-38 14.3-56.81 0-19.38-4.66-37.94-14.25-56.73a16 16 0 0128.5-14.54C346.19 208.12 352 231.44 352 256c0 23.86-6 47.81-17.7 71.19A16 16 0 01320 336z"/><path d="M368 384a16 16 0 01-13.86-24C373.05 327.09 384 299.51 384 256c0-44.17-10.93-71.56-29.82-103.94a16 16 0 0127.64-16.12C402.92 172.11 416 204.81 416 256c0 50.43-13.06 83.29-34.13 120a16 16 0 01-13.87 8z"/><path d="M416 432a16 16 0 01-13.39-24.74C429.85 365.47 448 323.76 448 256c0-66.5-18.18-108.62-45.49-151.39a16 16 0 1127-17.22C459.81 134.89 480 181.74 480 256c0 64.75-14.66 113.63-50.6 168.74A16 16 0 01416 432z"/></svg>`;
     const SVG_VOL_OFF = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="none" stroke="white" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M416 432L64 80"/><path d="M243.33 98.86a23.89 23.89 0 00-25.55 1.82l-.66.51-28.52 23.35a8 8 0 00-.59 11.85l54.33 54.33a8 8 0 0013.66-5.66v-64.49a24.51 24.51 0 00-12.67-21.71zM251.33 335.29L96.69 180.69A16 16 0 0085.38 176H56a24 24 0 00-24 24v112a24 24 0 0024 24h69.76l92 75.31a23.9 23.9 0 0025.87 1.69A24.51 24.51 0 00256 391.45v-44.86a16 16 0 00-4.67-11.3zM352 256c0-24.56-5.81-47.87-17.75-71.27a16 16 0 10-28.5 14.55C315.34 218.06 320 236.62 320 256q0 4-.31 8.13a8 8 0 002.32 6.25l14.36 14.36a8 8 0 0013.55-4.31A146 146 0 00352 256zM416 256c0-51.18-13.08-83.89-34.18-120.06a16 16 0 00-27.64 16.12C373.07 184.44 384 211.83 384 256c0 23.83-3.29 42.88-9.37 60.65a8 8 0 001.9 8.26L389 337.4a8 8 0 0013.13-2.79C411 311.76 416 287.26 416 256z"/><path d="M480 256c0-74.25-20.19-121.11-50.51-168.61a16 16 0 10-27 17.22C429.82 147.38 448 189.5 448 256c0 46.19-8.43 80.27-22.43 110.53a8 8 0 001.59 9l11.92 11.92a8 8 0 0012.92-2.16C471.6 344.9 480 305 480 256z"/></svg>`;
     const SVG_FULLSCREEN_ENTER = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 4C3 3.44772 3.44772 3 4 3H8C8.55228 3 9 3.44772 9 4C9 4.55228 8.55228 5 8 5H6.41421L9.70711 8.29289C10.0976 8.68342 10.0976 9.31658 9.70711 9.70711C9.31658 10.0976 8.68342 10.0976 8.29289 9.70711L5 6.41421V8C5 8.55228 4.55228 9 4 9C3.44772 9 3 8.55228 3 8V4ZM16 3H20C20.5523 3 21 3.44772 21 4V8C21 8.55228 20.5523 9 20 9C19.4477 9 19 8.55228 19 8V6.41421L15.7071 9.70711C15.3166 10.0976 14.6834 10.0976 14.2929 9.70711C13.9024 9.31658 13.9024 8.68342 14.2929 8.29289L17.5858 5H16C15.4477 5 15 4.55228 15 4C15 3.44772 15.4477 3 16 3ZM9.70711 14.2929C10.0976 14.6834 10.0976 15.3166 9.70711 15.7071L6.41421 19H8C8.55228 19 9 19.4477 9 20C9 20.5523 8.55228 21 8 21H4C3.44772 21 3 20.5523 3 20V16C3 15.4477 3.44772 15 4 15C4.55228 15 5 15.4477 5 16V17.5858L8.29289 14.2929C8.68342 13.9024 9.31658 13.9024 9.70711 14.2929ZM14.2929 14.2929C14.6834 13.9024 15.3166 13.9024 15.7071 14.2929L19 17.5858V16C19 15.4477 19.4477 15 20 15C20.5523 15 21 15.4477 21 16V20C21 20.5523 20.5523 21 20 21H16C15.4477 21 15 20.5523 15 20C15 19.4477 15.4477 19 16 19H17.5858L14.2929 15.7071C13.9024 15.3166 13.9024 14.6834 14.2929 14.2929Z" fill="white"/></svg>`;
-    const SVG_FULLSCREEN_EXIT  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.29289 3.29289C3.68342 2.90237 4.31658 2.90237 4.70711 3.29289L8 6.58579V5C8 4.44772 8.44772 4 9 4C9.55228 4 10 4.44772 10 5V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9C4 8.44772 4.44772 8 5 8H6.58579L3.29289 4.70711C2.90237 4.31658 2.90237 3.68342 3.29289 3.29289ZM19.2929 3.29289C19.6834 2.90237 20.3166 2.90237 20.7071 3.29289C21.0976 3.68342 21.0976 4.31658 20.7071 4.70711L17.4142 8H19C19.5523 8 20 8.44772 20 9C20 9.55228 19.5523 10 19 10H15C14.4477 10 14 9.55228 14 9V5C14 4.44772 14.4477 4 15 4C15.5523 4 16 4.44772 16 5V6.58579L19.2929 3.29289ZM4 15C4 14.4477 4.44772 14 5 14H9C9.55228 14 10 14.4477 10 15V19C10 19.5523 9.55228 20 9 20C8.44772 20 8 19.5523 8 19V17.4142L4.70711 20.7071C4.31658 21.0976 3.68342 21.0976 3.29289 20.7071C2.90237 20.3166 2.90237 19.6834 3.29289 19.2929L6.58579 16H5C4.44772 16 4 15.5523 4 15ZM14 15C14 14.4477 14.4477 14 15 14H19C19.5523 14 20 14.4477 20 15C20 15.5523 19.5523 16 19 16H17.4142L20.7071 19.2929C21.0976 19.6834 21.0976 20.3166 20.7071 20.7071C20.3166 21.0976 19.6834 21.0976 19.2929 20.7071L16 17.4142V19C16 19.5523 15.5523 20 15 20C14.4477 20 14 19.5523 14 19V15Z" fill="white"/></svg>`;
+    const SVG_FULLSCREEN_EXIT  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.29289 3.29289C3.68342 2.90237 4.31658 2.90237 4.70711 3.29289L8 6.58579V5C8 4.44772 8.44772 4 9 4C9.55228 4 10 4.44772 10 5V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9C4 8.44772 4.44772 8 5 8H6.58579L3.29289 4.70711C2.90237 4.31658 2.90237 3.68342 3.29289 3.29289ZM19.2929 3.29289C19.6834 2.90237 20.3166 2.90237 20.7071 3.29289C21.0976 3.68342 21.0976 4.31658 20.7071 4.70711L17.4142 8H19C19.5523 8 20 8.44772 20 9C20 9.55228 19.5523 10 19 10H15C14.4477 10 14 9.55228 14 9V5C14 4.44772 14.4477 4 15 4C15.5523 4 16 4.44772 16 5V6.58579L19.2929 3.29289ZM4 15C4 14.4477 4.44772 14 5 14H9C9.55228 14 10 14.4477 10 15V19C10 19.5523 9.55228 20 9 20C8.44772 20 8 19.5523 8 19V17.5858L4.70711 20.7071C4.31658 21.0976 3.68342 21.0976 3.29289 20.7071C2.90237 20.3166 2.90237 19.6834 3.29289 19.2929L6.58579 16H5C4.44772 16 4 15.5523 4 15ZM14 15C14 14.4477 14.4477 14 15 14H19C19.5523 14 20 14.4477 20 15C20 15.5523 19.5523 16 19 16H17.4142L20.7071 19.2929C21.0976 19.6834 21.0976 20.3166 20.7071 20.7071C20.3166 21.0976 19.6834 21.0976 19.2929 20.7071L16 17.4142V19C16 19.5523 15.5523 20 15 20C14.4477 20 14 19.5523 14 19V15Z" fill="white"/></svg>`;
     const SVG_SEEK_FWD  = `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M480 256c0 123.5-100.3 224-223.5 224C133.1 480 32 379.5 32 256S133.1 32 256.5 32C379.7 32 480 132.5 480 256z" fill="none" stroke="white" stroke-miterlimit="10" stroke-width="32"/><path d="M256 176v160M336 256H176" stroke="white" stroke-linecap="round" stroke-width="32" fill="none"/></svg>`;
     const SVG_SEEK_BACK = `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M480 256c0 123.5-100.3 224-223.5 224C133.1 480 32 379.5 32 256S133.1 32 256.5 32C379.7 32 480 132.5 480 256z" fill="none" stroke="white" stroke-miterlimit="10" stroke-width="32"/><path d="M176 256h160" stroke="white" stroke-linecap="round" stroke-width="32" fill="none"/></svg>`;
 
@@ -1516,11 +1516,23 @@
             updateProgressBar();
         }
 
-        /* ===== دعم الضغط المزدوج باللمس للتقديم/التأخير ===== */
-        let tapCount = 0;
-        let tapTimer = null;
-        let tapSide  = null;
-        const TAP_DELAY = 300;
+        /* =====================================================================
+           منطقة اللمس على الفيديو - مُحدَّثة بالكامل
+           - نقرة واحدة: تشغيل / إيقاف
+           - نقرتان سريعتان على نفس الجانب: تقديم/تأخير 5 ثوانٍ
+           - سحب عمودي: تمرير الصفحة بدون تغيير حالة التشغيل
+        ===================================================================== */
+        let tapCount      = 0;
+        let tapTimer      = null;
+        let tapSide       = null;
+        const TAP_DELAY   = 300;
+
+        // متغيرات تتبع اللمس للتمييز بين النقر والسحب
+        let touchStartX   = 0;
+        let touchStartY   = 0;
+        let touchStartTime = 0;
+        let isTouchScrolling = false;        // هل المستخدم يسحب للتمرير؟
+        const SCROLL_THRESHOLD = 8;          // بكسل: الحد الأدنى للحركة لاعتبارها سحباً
 
         wrapper.addEventListener('touchstart', (e) => {
             const target = e.target;
@@ -1531,14 +1543,67 @@
 
             if (isOnControls) return;
 
+            // حفظ نقطة البداية
+            const touch   = e.touches[0];
+            touchStartX   = touch.clientX;
+            touchStartY   = touch.clientY;
+            touchStartTime = Date.now();
+            isTouchScrolling = false;
+
+            // لا نمنع الحدث هنا حتى يتمكن المتصفح من تقرير التمرير
+        }, { passive: true });
+
+        wrapper.addEventListener('touchmove', (e) => {
+            const target = e.target;
+            const isOnControls =
+                target.closest('.custom-controls') ||
+                target.closest('.cvp-settings-corner') ||
+                target.closest('.seek-flash');
+
+            if (isOnControls) return;
+
+            const touch = e.touches[0];
+            const dx = Math.abs(touch.clientX - touchStartX);
+            const dy = Math.abs(touch.clientY - touchStartY);
+
+            // إذا كانت الحركة الرأسية أكبر من الأفقية وتجاوزت الحد → تمرير
+            if (dy > SCROLL_THRESHOLD && dy > dx) {
+                isTouchScrolling = true;
+                // نلغي أي نقرة معلقة
+                clearTimeout(tapTimer);
+                tapCount = 0;
+                tapSide  = null;
+            }
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', (e) => {
+            const target = e.target;
+            const isOnControls =
+                target.closest('.custom-controls') ||
+                target.closest('.cvp-settings-corner') ||
+                target.closest('.seek-flash');
+
+            if (isOnControls) return;
+
+            // إذا كان المستخدم يمرر الصفحة، نتجاهل الحدث تماماً
+            if (isTouchScrolling) {
+                isTouchScrolling = false;
+                return;
+            }
+
+            // تحقق من أن المدة كانت قصيرة (نقرة حقيقية وليست ضغطاً مطولاً)
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration > 500) return;
+
             e.preventDefault();
 
-            const touch  = e.touches[0];
+            const touch  = e.changedTouches[0];
             const rect   = wrapper.getBoundingClientRect();
             const touchX = touch.clientX - rect.left;
             const side   = touchX < rect.width / 2 ? 'left' : 'right';
 
             if (tapCount === 1 && tapSide === side) {
+                // نقرتان على نفس الجانب → تقديم/تأخير
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 tapSide  = null;
@@ -1551,23 +1616,22 @@
                     seekBy(-5);
                 }
 
-                /* الحفاظ على حالة التشغيل */
+                // الحفاظ على حالة التشغيل
                 if (!wasPaused && videoElement.paused) {
                     videoElement.play();
                 }
 
-                /* ===== إظهار عناصر التحكم إذا كان الفيديو يعمل ===== */
                 showControls();
-                if (!videoElement.paused) {
-                    scheduleHide();
-                }
+                if (!videoElement.paused) scheduleHide();
 
             } else {
+                // بداية عدّ النقرات
                 tapCount = 1;
                 tapSide  = side;
                 clearTimeout(tapTimer);
                 tapTimer = setTimeout(() => {
                     if (tapCount === 1) {
+                        // نقرة واحدة → تشغيل/إيقاف
                         playPause();
                         showControls();
                         updateControlsVisibility();
@@ -1577,6 +1641,13 @@
                 }, TAP_DELAY);
             }
         }, { passive: false });
+
+        wrapper.addEventListener('touchcancel', () => {
+            isTouchScrolling = false;
+            clearTimeout(tapTimer);
+            tapCount = 0;
+            tapSide  = null;
+        }, { passive: true });
 
         /* ===== لوحة المفاتيح ===== */
         wrapper.setAttribute('tabindex', '0');
