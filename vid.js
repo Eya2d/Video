@@ -811,10 +811,16 @@
             || (navigator.maxTouchPoints > 1);
     }
 
+    /* ===== FIX 3: formatTime يدعم ساعات بشكل صحيح 1:10:17 ===== */
     function formatTime(s) {
-        if (isNaN(s)) return '0:00';
-        const m = Math.floor(s / 60);
-        const sec = Math.floor(s % 60);
+        if (isNaN(s) || s < 0) return '0:00';
+        s = Math.floor(s);
+        const h   = Math.floor(s / 3600);
+        const m   = Math.floor((s % 3600) / 60);
+        const sec = s % 60;
+        if (h > 0) {
+            return h + ':' + (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+        }
         return m + ':' + (sec < 10 ? '0' : '') + sec;
     }
 
@@ -895,6 +901,9 @@
         let backdropEl    = null;
         let isAnimating   = false;
 
+        /* ===== FIX 1: متغير لمنع تمرير النقر للفيديو عند إغلاق القائمة ===== */
+        let menuJustClosed = false;
+
         function getSpeedLabel(s) {
             return s === 1 ? 'عادي' : s + 'x';
         }
@@ -962,11 +971,17 @@
             bd.className = 'cvp-backdrop';
             bd.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
+                /* FIX 1: نضع العلامة قبل الإغلاق */
+                menuJustClosed = true;
                 closeAll();
+                setTimeout(() => { menuJustClosed = false; }, 300);
             });
             bd.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
+                /* FIX 1: نضع العلامة قبل الإغلاق */
+                menuJustClosed = true;
                 closeAll();
+                setTimeout(() => { menuJustClosed = false; }, 300);
             }, { passive: true });
             return bd;
         }
@@ -979,7 +994,6 @@
             settingsCorner.appendChild(menuEl);
             activeMenuEl = menuEl;
             settingsBtn.classList.add('open');
-            // إخفاء شريط التحكم عند فتح الإعدادات
             wrapper.classList.add('settings-open');
         }
 
@@ -1027,7 +1041,6 @@
             settingsBtn.classList.remove('open');
             unmountCurrent();
             unmountBackdrop();
-            // إظهار شريط التحكم عند إغلاق الإعدادات
             wrapper.classList.remove('settings-open');
         }
 
@@ -1042,7 +1055,9 @@
 
         document.addEventListener('mousedown', (e) => {
             if (activeMenuEl && !wrapper.contains(e.target)) {
+                menuJustClosed = true;
                 closeAll();
+                setTimeout(() => { menuJustClosed = false; }, 300);
             }
         });
 
@@ -1132,7 +1147,7 @@
             if (!isNaN(duration) && duration !== Infinity) {
                 totalTimeDisplay.textContent = formatTime(duration);
             } else {
-                totalTimeDisplay.textContent = '00:00';
+                totalTimeDisplay.textContent = '0:00';
             }
         }
 
@@ -1256,8 +1271,6 @@
 
         /* إدارة ظهور عناصر التحكم */
         let hideTimeout = null;
-
-        // متغير لتتبع ما إذا كانت أدوات التحكم مرئية على الهاتف
         let mobileControlsVisible = false;
 
         function showControls() {
@@ -1541,13 +1554,14 @@
             showCenterIcon(false);
         }
 
-        /* ===== نظام تراكم الـ seek (السهام واللمس) ===== */
-        // متغيرات لتراكم مقدار التقديم/التأخير
-        let seekAccumLeft  = 0;   // مجموع الثواني للجهة اليسرى
-        let seekAccumRight = 0;   // مجموع الثواني للجهة اليمنى
+        /* =========================================================
+           نظام تراكم الـ seek (السهام واللمس)
+        ========================================================= */
+        let seekAccumLeft  = 0;
+        let seekAccumRight = 0;
         let seekResetTimerLeft  = null;
         let seekResetTimerRight = null;
-        const SEEK_RESET_DELAY  = 1000; // ms بعد آخر ضغطة نعيد العداد
+        const SEEK_RESET_DELAY  = 1000;
 
         function showFlash(side, seconds) {
             const el = side === 'left' ? flashLeft : flashRight;
@@ -1555,7 +1569,6 @@
             el.querySelector('span').textContent = label + seconds + 's';
             el.classList.add('show');
 
-            // نلغي أي مؤقت إخفاء سابق لهذه الجهة
             if (side === 'left') {
                 clearTimeout(flashLeft._hideTimer);
                 flashLeft._hideTimer = setTimeout(() => el.classList.remove('show'), 800);
@@ -1565,6 +1578,7 @@
             }
         }
 
+        /* ===== FIX 2: seekBy لا يغير حالة التشغيل ===== */
         function seekBy(seconds) {
             const side = seconds < 0 ? 'left' : 'right';
 
@@ -1583,12 +1597,11 @@
             }
 
             updateProgressBar();
+            /* لا نلمس حالة التشغيل هنا إطلاقاً */
         }
 
         /* =========================================================
            منطق اللمس على الهاتف
-           - أول لمسة على الشاشة (عندما تكون الأدوات مخفية): تُظهر الأدوات فقط
-           - اللمسة التالية: تشغيل/إيقاف أو double tap للتقديم/التأخير
         ========================================================= */
 
         const SCROLL_THRESHOLD = 10;
@@ -1662,7 +1675,24 @@
 
             e.preventDefault();
 
-            // إذا كانت أدوات التحكم مخفية → أظهرها فقط ولا تفعل شيئاً آخر
+            /* FIX 1: إذا كانت القائمة مفتوحة → أغلقها فقط ولا تفعل شيئاً آخر */
+            if (activeMenuEl) {
+                menuJustClosed = true;
+                closeAll();
+                setTimeout(() => { menuJustClosed = false; }, 300);
+                touchMoved       = false;
+                touchIsScrolling = false;
+                return;
+            }
+
+            /* FIX 1: إذا تم إغلاق القائمة للتو → تجاهل النقرة */
+            if (menuJustClosed) {
+                touchMoved       = false;
+                touchIsScrolling = false;
+                return;
+            }
+
+            /* إذا كانت أدوات التحكم مخفية → أظهرها فقط */
             if (!mobileControlsVisible) {
                 showControls();
                 scheduleHide();
@@ -1671,40 +1701,28 @@
                 return;
             }
 
-            // إذا كانت قائمة الإعدادات مفتوحة → أغلقها
-            if (activeMenuEl) {
-                closeAll();
-                touchMoved       = false;
-                touchIsScrolling = false;
-                return;
-            }
-
-            // الأدوات مرئية → تشغيل/إيقاف أو double tap
+            /* الأدوات مرئية → تشغيل/إيقاف أو double tap للتقديم/التأخير */
             const touch  = e.changedTouches[0];
             const rect   = wrapper.getBoundingClientRect();
             const touchX = touch.clientX - rect.left;
             const side   = touchX < rect.width / 2 ? 'left' : 'right';
 
             if (tapCount === 1 && tapSide === side) {
-                // double tap → تقديم أو تأخير
+                /* double tap → تقديم أو تأخير فقط، بدون تغيير حالة التشغيل (FIX 2) */
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 tapSide  = null;
 
-                const wasPaused = videoElement.paused;
                 if (side === 'right') {
                     seekBy(5);
                 } else {
                     seekBy(-5);
                 }
-                if (!wasPaused && videoElement.paused) {
-                    videoElement.play();
-                }
                 showControls();
                 if (!videoElement.paused) scheduleHide();
 
             } else {
-                // single tap → انتظر لتحديد إذا كان double tap
+                /* single tap → انتظر لتحديد إذا كان double tap */
                 tapCount = 1;
                 tapSide  = side;
                 clearTimeout(tapTimer);
@@ -1735,15 +1753,17 @@
                 case ' ':
                 case 'k':
                     e.preventDefault();
+                    /* FIX 1: إذا كانت القائمة مفتوحة → أغلقها فقط */
+                    if (activeMenuEl) { closeAll(); break; }
                     playPause();
                     break;
                 case 'ArrowRight':
                     e.preventDefault();
-                    seekBy(5);
+                    seekBy(5);   /* FIX 2: لا يغير حالة التشغيل */
                     break;
                 case 'ArrowLeft':
                     e.preventDefault();
-                    seekBy(-5);
+                    seekBy(-5);  /* FIX 2: لا يغير حالة التشغيل */
                     break;
                 case 'ArrowUp':
                     e.preventDefault();
@@ -1799,12 +1819,18 @@
 
         scanlineDiv.addEventListener('click', (e) => {
             e.stopPropagation();
+            /* FIX 1: إذا كانت القائمة مفتوحة → أغلقها فقط */
+            if (activeMenuEl) { menuJustClosed = true; closeAll(); setTimeout(() => { menuJustClosed = false; }, 300); return; }
+            if (menuJustClosed) return;
             playPause();
         });
 
         videoElement.addEventListener('click', (e) => {
             if (!isMobileDevice()) {
                 e.stopPropagation();
+                /* FIX 1: إذا كانت القائمة مفتوحة → أغلقها فقط */
+                if (activeMenuEl) { menuJustClosed = true; closeAll(); setTimeout(() => { menuJustClosed = false; }, 300); return; }
+                if (menuJustClosed) return;
                 playPause();
             }
         });
