@@ -105,6 +105,11 @@
         .dideofullscreen .custom-volume.touch-expanded {
             width: 120px !important;
         }
+        .dideofullscreen .cvp-speed-menu {
+            max-height: 250px !important;
+            top: 44px !important;
+            bottom: auto !important;
+        }
 
         @media (hover: none) and (pointer: coarse) {
           .custom-buttons {
@@ -118,6 +123,15 @@
           }
           .custom-volume:hover {
             width: 28px !important;
+          }
+          .cvp-speed-menu {
+            z-index: 5;
+            max-height: none;
+            top: 0 !important;
+            bottom: 10px;
+          }
+          .custom-video-wrapper {
+            height: max-content !important;
           }
         }
 
@@ -556,6 +570,8 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
+            bottom: 0;
+            width: 0;
         }
         .cvp-settings-btn {
             cursor: pointer;
