@@ -900,8 +900,18 @@
         let backdropEl    = null;
         let isAnimating   = false;
 
-        /* FIX 1: متغير لمنع تمرير النقر للفيديو عند إغلاق القائمة */
+        /* متغير لمنع تمرير النقر للفيديو عند إغلاق القائمة */
         let menuJustClosed = false;
+
+        /*
+         * ★ isDragging ★
+         * يُضبط على true فور بدء أي سحب (شريط التقدم أو الصوت، ماوس أو لمس)
+         * ويُعاد إلى false عند رفع الإصبع/الزر.
+         * طالما isDragging === true:
+         *   - scheduleHide() لا تُجدوِل أي إخفاء
+         *   - mouseleave لا يُخفي عناصر التحكم
+         */
+        let isDragging = false;
 
         function getSpeedLabel(s) {
             return s === 1 ? 'عادي' : s + 'x';
@@ -1268,13 +1278,9 @@
 
         /* =========================================================
            إدارة ظهور عناصر التحكم
-           — isDragging: true طالما يجري سحب شريط التقدم أو الصوت
-             (ماوس أو لمس)، مما يمنع scheduleHide من إخفاء الشريط
         ========================================================= */
         let hideTimeout = null;
         let mobileControlsVisible = false;
-        // ★ الإضافة الجديدة: علم السحب النشط
-        let isDragging = false;
 
         function showControls() {
             wrapper.classList.add('controls-visible');
@@ -1283,12 +1289,12 @@
                 mobileControlsVisible = true;
             }
         }
+
         function scheduleHide() {
             clearTimeout(hideTimeout);
-            // ★ لا تخفِ أدوات التحكم إذا كان هناك سحب نشط
+            /* ★ لا نُجدوِل الإخفاء أثناء السحب */
             if (isDragging) return;
             hideTimeout = setTimeout(() => {
-                // ★ تحقق مجدداً قبل الإخفاء الفعلي
                 if (!videoElement.paused && !isDragging) {
                     wrapper.classList.remove('controls-visible');
                     wrapper.classList.add('cursor-hidden');
@@ -1298,6 +1304,7 @@
                 }
             }, 3000);
         }
+
         function updateControlsVisibility() {
             if (videoElement.paused) { showControls(); clearTimeout(hideTimeout); }
             else { scheduleHide(); }
@@ -1307,9 +1314,11 @@
             showControls();
             if (!videoElement.paused) scheduleHide();
         });
+
         wrapper.addEventListener('mouseleave', () => {
-            // ★ لا تخفِ أدوات التحكم عند مغادرة الماوس إذا كان هناك سحب نشط
-            if (!videoElement.paused && !isDragging) {
+            /* ★ لا نُخفي إذا كان هناك سحب نشط خارج الـ wrapper */
+            if (isDragging) return;
+            if (!videoElement.paused) {
                 clearTimeout(hideTimeout);
                 wrapper.classList.remove('controls-visible');
                 wrapper.classList.remove('cursor-hidden');
@@ -1375,12 +1384,14 @@
 
         /* ===== شريط التقدم - ماوس ===== */
         let seekingProgress = false;
+
         progressTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             seekingProgress = true;
-            // ★ بدء السحب: أثبّت أدوات التحكم
+            /* ★ بدء السحب: أبقِ Controls ظاهرة */
             isDragging = true;
             showControls();
+            clearTimeout(hideTimeout);
             progressTrack.classList.add('dragging');
             applySeekPct(getPctFromEvent(e, progressTrack));
         });
@@ -1398,19 +1409,16 @@
             if (seekingProgress) {
                 seekingProgress = false;
                 progressTrack.classList.remove('dragging');
-                // ★ انتهى السحب: أعد جدولة الإخفاء إن كان الفيديو يعمل
-                isDragging = seekingVolume; // قد يكون شريط الصوت لا يزال مسحوباً
-                if (!isDragging) {
-                    if (!videoElement.paused) scheduleHide();
-                }
+                /* ★ انتهاء السحب */
+                isDragging = false;
+                /* إذا كان الفيديو يعمل وليس داخل الـ wrapper → جدوِل الإخفاء */
+                if (!videoElement.paused) scheduleHide();
             }
             if (seekingVolume) {
                 seekingVolume = false;
-                // ★ انتهى السحب: أعد جدولة الإخفاء إن كان الفيديو يعمل
-                isDragging = seekingProgress; // قد يكون شريط التقدم لا يزال مسحوباً
-                if (!isDragging) {
-                    if (!videoElement.paused) scheduleHide();
-                }
+                /* ★ انتهاء السحب */
+                isDragging = false;
+                if (!videoElement.paused) scheduleHide();
             }
         });
 
@@ -1425,9 +1433,10 @@
             e.stopPropagation();
             e.preventDefault();
             touchSeekingProgress = true;
-            // ★ بدء السحب باللمس: أثبّت أدوات التحكم
+            /* ★ بدء السحب باللمس */
             isDragging = true;
             showControls();
+            clearTimeout(hideTimeout);
             progressTrack.classList.add('dragging');
             const touch = e.touches[0];
             applySeekPct(getPctFromTouch(touch, progressTrack));
@@ -1448,20 +1457,16 @@
             e.stopPropagation();
             touchSeekingProgress = false;
             progressTrack.classList.remove('dragging');
-            // ★ انتهى السحب باللمس
-            isDragging = touchSeekingVolume;
-            if (!isDragging) {
-                scheduleHide();
-            }
+            /* ★ انتهاء السحب باللمس */
+            isDragging = false;
+            scheduleHide();
         }, { passive: true });
 
         progressTrack.addEventListener('touchcancel', () => {
             touchSeekingProgress = false;
             progressTrack.classList.remove('dragging');
-            isDragging = touchSeekingVolume;
-            if (!isDragging) {
-                if (!videoElement.paused) scheduleHide();
-            }
+            /* ★ إلغاء السحب باللمس */
+            isDragging = false;
         }, { passive: true });
 
         /* ===== شريط الصوت - ماوس ===== */
@@ -1477,9 +1482,10 @@
         volumeTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             seekingVolume = true;
-            // ★ بدء سحب الصوت: أثبّت أدوات التحكم
+            /* ★ بدء السحب */
             isDragging = true;
             showControls();
+            clearTimeout(hideTimeout);
             volFromClientX(e.clientX);
         });
 
@@ -1503,9 +1509,10 @@
             e.stopPropagation();
             e.preventDefault();
             touchSeekingVolume = true;
-            // ★ بدء سحب الصوت باللمس: أثبّت أدوات التحكم
+            /* ★ بدء السحب باللمس */
             isDragging = true;
             showControls();
+            clearTimeout(hideTimeout);
             volumeTrack.style.height = '6px';
             const touch = e.touches[0];
             const rect = volumeTrack.getBoundingClientRect();
@@ -1531,11 +1538,9 @@
             e.stopPropagation();
             touchSeekingVolume = false;
             volumeTrack.style.height = '';
-            // ★ انتهى سحب الصوت باللمس
-            isDragging = touchSeekingProgress;
-            if (!isDragging) {
-                scheduleHide();
-            }
+            /* ★ انتهاء السحب باللمس */
+            isDragging = false;
+            scheduleHide();
             volumeTouchExpandTimer = setTimeout(() => {
                 volumeWrap.classList.remove('touch-expanded');
             }, 2000);
@@ -1544,10 +1549,8 @@
         volumeTrack.addEventListener('touchcancel', () => {
             touchSeekingVolume = false;
             volumeTrack.style.height = '';
-            isDragging = touchSeekingProgress;
-            if (!isDragging) {
-                if (!videoElement.paused) scheduleHide();
-            }
+            /* ★ إلغاء السحب باللمس */
+            isDragging = false;
         }, { passive: true });
 
         videoElement.addEventListener('timeupdate', updateProgressBar);
@@ -1622,7 +1625,6 @@
             }
         }
 
-        /* FIX 2: seekBy لا يغير حالة التشغيل */
         function seekBy(seconds) {
             const side = seconds < 0 ? 'left' : 'right';
 
@@ -1718,7 +1720,6 @@
 
             e.preventDefault();
 
-            /* FIX 1: إذا كانت القائمة مفتوحة → أغلقها فقط ولا تفعل شيئاً آخر */
             if (activeMenuEl) {
                 menuJustClosed = true;
                 closeAll();
@@ -1728,14 +1729,12 @@
                 return;
             }
 
-            /* FIX 1: إذا تم إغلاق القائمة للتو → تجاهل النقرة */
             if (menuJustClosed) {
                 touchMoved       = false;
                 touchIsScrolling = false;
                 return;
             }
 
-            /* إذا كانت أدوات التحكم مخفية → أظهرها فقط */
             if (!mobileControlsVisible) {
                 showControls();
                 scheduleHide();
@@ -1744,14 +1743,12 @@
                 return;
             }
 
-            /* الأدوات مرئية → تشغيل/إيقاف أو double tap للتقديم/التأخير */
             const touch  = e.changedTouches[0];
             const rect   = wrapper.getBoundingClientRect();
             const touchX = touch.clientX - rect.left;
             const side   = touchX < rect.width / 2 ? 'left' : 'right';
 
             if (tapCount === 1 && tapSide === side) {
-                /* double tap → تقديم أو تأخير فقط، بدون تغيير حالة التشغيل */
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 tapSide  = null;
@@ -1765,7 +1762,6 @@
                 if (!videoElement.paused) scheduleHide();
 
             } else {
-                /* single tap → انتظر لتحديد إذا كان double tap */
                 tapCount = 1;
                 tapSide  = side;
                 clearTimeout(tapTimer);
@@ -1796,7 +1792,6 @@
                 case ' ':
                 case 'k':
                     e.preventDefault();
-                    /* FIX 1: إذا كانت القائمة مفتوحة → أغلقها فقط */
                     if (activeMenuEl) { closeAll(); break; }
                     playPause();
                     break;
@@ -1862,7 +1857,6 @@
 
         scanlineDiv.addEventListener('click', (e) => {
             e.stopPropagation();
-            /* FIX 1: إذا كانت القائمة مفتوحة → أغلقها فقط */
             if (activeMenuEl) { menuJustClosed = true; closeAll(); setTimeout(() => { menuJustClosed = false; }, 300); return; }
             if (menuJustClosed) return;
             playPause();
@@ -1871,7 +1865,6 @@
         videoElement.addEventListener('click', (e) => {
             if (!isMobileDevice()) {
                 e.stopPropagation();
-                /* FIX 1: إذا كانت القائمة مفتوحة → أغلقها فقط */
                 if (activeMenuEl) { menuJustClosed = true; closeAll(); setTimeout(() => { menuJustClosed = false; }, 300); return; }
                 if (menuJustClosed) return;
                 playPause();
