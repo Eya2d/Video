@@ -158,8 +158,7 @@
             color: #2d94ff;
             font-family: sans-serif;
             font-size: 20px;
-            z-index: 20;
-            display: none;
+            /*z-index: 20;*/
             background: rgba(0,0,0,0.7);
             padding: 10px 20px;
             border-radius: 30px;
@@ -236,6 +235,7 @@
             display: block;
         }
 
+        /* ===== شريط التقدم المخصص ===== */
         .custom-progress {
             width: 100%;
             margin: 8px 0 12px;
@@ -312,6 +312,7 @@
             opacity: 1;
         }
 
+        /* ===== شريط الصوت المخصص ===== */
         .custom-volume {
             transition: width 0.3s ease;
             overflow: hidden;
@@ -456,6 +457,7 @@
             height: 28px !important;
         }
 
+        /* flash overlay للسهام */
         .seek-flash {
             position: absolute;
             z-index: 20;
@@ -479,6 +481,7 @@
         .seek-flash.show  { opacity: 1; }
         .seek-flash svg { width: 18px; height: 18px; fill: white; }
 
+        /* ===== أيقونة التشغيل/الإيقاف في المنتصف ===== */
         .center-play-icon {
             position: absolute;
             z-index: 15;
@@ -558,6 +561,7 @@
             background: #ffffffd4;
         }
 
+        /* ===== زر الإعدادات في الزاوية العلوية اليمنى ===== */
         .cvp-settings-corner {
             position: absolute;
             top: 10px;
@@ -598,6 +602,7 @@
             transform: rotate(90deg);
         }
 
+        /* ===== الطبقة الشفافة (backdrop) ===== */
         .cvp-backdrop {
             position: absolute;
             inset: 0;
@@ -618,6 +623,7 @@
             to   { opacity: 0; }
         }
 
+        /* ===== القائمة الرئيسية للإعدادات ===== */
         .cvp-settings-menu {
             position: absolute;
             top: 44px;
@@ -682,6 +688,7 @@
             fill: rgba(255,255,255,0.55);
         }
 
+        /* ===== قائمة السرعة ===== */
         .cvp-speed-menu {
             position: absolute;
             max-height: 250px;
@@ -783,53 +790,6 @@
             display: flex;
             align-items: center;
         }
-
-        /* ===== مؤشر التحميل السريع ===== */
-        .cvp-fast-loader {
-            position: absolute;
-            inset: 0;
-            z-index: 18;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.55);
-            pointer-events: none;
-            opacity: 1;
-            transition: opacity 0.4s ease;
-        }
-        .cvp-fast-loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .cvp-fast-loader-spinner {
-            width: 44px;
-            height: 44px;
-            border: 3px solid rgba(255,255,255,0.15);
-            border-top-color: #2d94ff;
-            border-radius: 50%;
-            animation: cvp-spin 0.7s linear infinite;
-        }
-        .cvp-fast-loader-text {
-            margin-top: 12px;
-            color: rgba(255,255,255,0.75);
-            font-family: sans-serif;
-            font-size: 13px;
-        }
-        .cvp-buffer-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: #2d94ff;
-            width: 0%;
-            transition: width 0.2s ease;
-            z-index: 19;
-            border-radius: 0 2px 2px 0;
-        }
-        @keyframes cvp-spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
     `;
 
@@ -885,55 +845,6 @@
         return `cvp_${suffix}_${hash}`;
     }
 
-    /* =========================================================
-       تحميل الفيديو بسرعة كبيرة باستخدام fetch + MediaSource
-    ========================================================= */
-    function fastPreloadVideo(videoElement) {
-        const src = videoElement.getAttribute('src') || videoElement.src;
-        if (!src) return;
-
-        /* 1. preload=auto يطلب من المتصفح تحميل الفيديو كاملاً فوراً */
-        videoElement.preload = 'auto';
-
-        /* 2. fetchpriority=high يرفع أولوية طلب الشبكة */
-        videoElement.setAttribute('fetchpriority', 'high');
-
-        /* 3. أضف <link rel="preload"> في الـ head لتحميل الفيديو موازياً */
-        if (!document.querySelector(`link[href="${src}"][rel="preload"]`)) {
-            const link = document.createElement('link');
-            link.rel  = 'preload';
-            link.as   = 'video';
-            link.href = src;
-            link.setAttribute('fetchpriority', 'high');
-            /* crossorigin فقط إن كان المصدر خارجياً */
-            try {
-                const url = new URL(src, location.href);
-                if (url.origin !== location.origin) {
-                    link.crossOrigin = 'anonymous';
-                }
-            } catch(e) {}
-            document.head.appendChild(link);
-        }
-
-        /* 4. استخدام fetch مع cache=force-cache لتعبئة cache المتصفح فوراً */
-        const srcAbsolute = new URL(src, location.href).href;
-        fetch(srcAbsolute, {
-            method: 'GET',
-            cache: 'force-cache',
-            priority: 'high',
-            headers: { 'Range': 'bytes=0-' }
-        }).catch(() => {
-            /* صامت — الـ fetch مجرد تسخين للكاش، لا يؤثر تعذّره على التشغيل */
-        });
-
-        /* 5. اضبط buffered hint: بدء التشغيل فور توفر أول 2 ثانية */
-        if ('fastSeek' in videoElement) {
-            videoElement.addEventListener('loadedmetadata', () => {
-                /* لا شيء — فقط نضمن أن الـ metadata حُمّل أولاً */
-            }, { once: true });
-        }
-    }
-
     const allPlayers = [];
 
     window.addEventListener('beforeunload', () => {
@@ -947,41 +858,12 @@
         if (!videoElement) return;
 
         videoElement.removeAttribute('controls');
-
-        /* ★ تحسين التحميل السريع — يُستدعى قبل أي شيء آخر */
-        fastPreloadVideo(videoElement);
+        videoElement.preload = 'metadata';
 
         const wrapper = document.createElement('div');
         wrapper.className = 'custom-video-wrapper loading';
         videoElement.parentNode.insertBefore(wrapper, videoElement);
         wrapper.appendChild(videoElement);
-
-        /* ===== مؤشر التحميل السريع ===== */
-        const fastLoader = document.createElement('div');
-        fastLoader.className = 'cvp-fast-loader';
-        fastLoader.innerHTML = `
-            <div class="cvp-fast-loader-spinner"></div>
-            <div class="cvp-fast-loader-text">جارٍ التحميل...</div>
-        `;
-        wrapper.appendChild(fastLoader);
-
-        /* شريط تقدم التحميل في الأسفل */
-        const bufferBar = document.createElement('div');
-        bufferBar.className = 'cvp-buffer-bar';
-        wrapper.appendChild(bufferBar);
-
-        function updateBufferBar() {
-            if (!videoElement.duration || !videoElement.buffered.length) return;
-            const pct = (videoElement.buffered.end(videoElement.buffered.length - 1) / videoElement.duration) * 100;
-            bufferBar.style.width = pct + '%';
-        }
-
-        function hideLoader() {
-            fastLoader.classList.add('hidden');
-            wrapper.classList.remove('loading');
-            /* أخفِ شريط التحميل بعد 800ms */
-            setTimeout(() => { bufferBar.style.opacity = '0'; }, 800);
-        }
 
         /* flash overlays */
         const flashLeft  = document.createElement('div');
@@ -1034,8 +916,17 @@
         let backdropEl    = null;
         let isAnimating   = false;
 
+        /* متغير لمنع تمرير النقر للفيديو عند إغلاق القائمة */
         let menuJustClosed = false;
 
+        /*
+         * ★ isDragging ★
+         * يُضبط على true فور بدء أي سحب (شريط التقدم أو الصوت، ماوس أو لمس)
+         * ويُعاد إلى false عند رفع الإصبع/الزر.
+         * طالما isDragging === true:
+         *   - scheduleHide() لا تُجدوِل أي إخفاء
+         *   - mouseleave لا يُخفي عناصر التحكم
+         */
         let isDragging = false;
 
         function getSpeedLabel(s) {
@@ -1283,32 +1174,18 @@
             }
         }
 
-        /* ★ canplay → أخفِ مؤشر التحميل وفعّل الأزرار فوراً */
         videoElement.addEventListener('canplay', () => {
-            hideLoader();
+            wrapper.classList.remove('loading');
             setControlsDisabled(false);
             updateTotalTimeDisplay();
         }, { once: true });
 
-        /* ★ canplaythrough → الفيديو محمّل بالكامل تقريباً */
-        videoElement.addEventListener('canplaythrough', () => {
-            hideLoader();
-            setControlsDisabled(false);
-            updateTotalTimeDisplay();
-        });
-
         videoElement.addEventListener('error', () => {
-            hideLoader();
+            wrapper.classList.remove('loading');
             setControlsDisabled(false);
         });
 
         videoElement.addEventListener('durationchange', updateTotalTimeDisplay);
-
-        /* ★ تحديث شريط التحميل لحظياً */
-        videoElement.addEventListener('progress', () => {
-            updateBufferBar();
-            updateBuffered();
-        });
 
         /* حفظ واستعادة مستوى الصوت */
         let volumeStorageKey = null;
@@ -1431,6 +1308,7 @@
 
         function scheduleHide() {
             clearTimeout(hideTimeout);
+            /* ★ لا نُجدوِل الإخفاء أثناء السحب */
             if (isDragging) return;
             hideTimeout = setTimeout(() => {
                 if (!videoElement.paused && !isDragging) {
@@ -1454,6 +1332,7 @@
         });
 
         wrapper.addEventListener('mouseleave', () => {
+            /* ★ لا نُخفي إذا كان هناك سحب نشط خارج الـ wrapper */
             if (isDragging) return;
             if (!videoElement.paused) {
                 clearTimeout(hideTimeout);
@@ -1525,6 +1404,7 @@
         progressTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             seekingProgress = true;
+            /* ★ بدء السحب: أبقِ Controls ظاهرة */
             isDragging = true;
             showControls();
             clearTimeout(hideTimeout);
@@ -1545,11 +1425,14 @@
             if (seekingProgress) {
                 seekingProgress = false;
                 progressTrack.classList.remove('dragging');
+                /* ★ انتهاء السحب */
                 isDragging = false;
+                /* إذا كان الفيديو يعمل وليس داخل الـ wrapper → جدوِل الإخفاء */
                 if (!videoElement.paused) scheduleHide();
             }
             if (seekingVolume) {
                 seekingVolume = false;
+                /* ★ انتهاء السحب */
                 isDragging = false;
                 if (!videoElement.paused) scheduleHide();
             }
@@ -1566,6 +1449,7 @@
             e.stopPropagation();
             e.preventDefault();
             touchSeekingProgress = true;
+            /* ★ بدء السحب باللمس */
             isDragging = true;
             showControls();
             clearTimeout(hideTimeout);
@@ -1589,6 +1473,7 @@
             e.stopPropagation();
             touchSeekingProgress = false;
             progressTrack.classList.remove('dragging');
+            /* ★ انتهاء السحب باللمس */
             isDragging = false;
             scheduleHide();
         }, { passive: true });
@@ -1596,6 +1481,7 @@
         progressTrack.addEventListener('touchcancel', () => {
             touchSeekingProgress = false;
             progressTrack.classList.remove('dragging');
+            /* ★ إلغاء السحب باللمس */
             isDragging = false;
         }, { passive: true });
 
@@ -1612,6 +1498,7 @@
         volumeTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             seekingVolume = true;
+            /* ★ بدء السحب */
             isDragging = true;
             showControls();
             clearTimeout(hideTimeout);
@@ -1638,6 +1525,7 @@
             e.stopPropagation();
             e.preventDefault();
             touchSeekingVolume = true;
+            /* ★ بدء السحب باللمس */
             isDragging = true;
             showControls();
             clearTimeout(hideTimeout);
@@ -1666,6 +1554,7 @@
             e.stopPropagation();
             touchSeekingVolume = false;
             volumeTrack.style.height = '';
+            /* ★ انتهاء السحب باللمس */
             isDragging = false;
             scheduleHide();
             volumeTouchExpandTimer = setTimeout(() => {
@@ -1676,6 +1565,7 @@
         volumeTrack.addEventListener('touchcancel', () => {
             touchSeekingVolume = false;
             volumeTrack.style.height = '';
+            /* ★ إلغاء السحب باللمس */
             isDragging = false;
         }, { passive: true });
 
@@ -1710,45 +1600,25 @@
                 if (p.videoElement !== videoElement && !p.videoElement.paused) p.videoElement.pause();
             });
         }
-
-        /* ★ playPause مع promise handling صحيح */
         function playPause() {
             if (videoElement.paused) {
                 pauseOthers();
-                const playPromise = videoElement.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        showCenterIcon(false);
-                    }).catch((err) => {
-                        /* AbortError أو NotAllowedError — لا نفعل شيئاً */
-                        console.warn('CVP play error:', err.message);
-                    });
-                } else {
-                    showCenterIcon(false);
-                }
+                videoElement.play();
+                showCenterIcon(false);
             } else {
                 videoElement.pause();
                 showCenterIcon(true);
             }
         }
-
         function restartVideo() {
             pauseOthers();
             videoElement.currentTime = 0;
-            const playPromise = videoElement.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    showCenterIcon(false);
-                }).catch((err) => {
-                    console.warn('CVP restart error:', err.message);
-                });
-            } else {
-                showCenterIcon(false);
-            }
+            videoElement.play();
+            showCenterIcon(false);
         }
 
         /* =========================================================
-           نظام تراكم الـ seek
+           نظام تراكم الـ seek (السهام واللمس)
         ========================================================= */
         let seekAccumLeft  = 0;
         let seekAccumRight = 0;
@@ -1794,6 +1664,7 @@
         /* =========================================================
            منطق اللمس على الهاتف
         ========================================================= */
+
         const SCROLL_THRESHOLD = 10;
         const TAP_MOVE_LIMIT   = 8;
         const TAP_DELAY        = 300;
@@ -2023,18 +1894,6 @@
         videoElement.addEventListener('play',  () => { updatePlayButton(); updateControlsVisibility(); });
         videoElement.addEventListener('pause', () => { updatePlayButton(); updateControlsVisibility(); });
         videoElement.addEventListener('ended', () => { updatePlayButton(); updateControlsVisibility(); });
-
-        /* ★ waiting/stalled → أعِد إظهار مؤشر التحميل */
-        videoElement.addEventListener('waiting', () => {
-            if (!fastLoader.classList.contains('hidden')) return;
-            fastLoader.querySelector('.cvp-fast-loader-text').textContent = 'يتم التخزين المؤقت...';
-            fastLoader.classList.remove('hidden');
-        });
-
-        /* ★ playing → أخفِ مؤشر التحميل فوراً */
-        videoElement.addEventListener('playing', () => {
-            hideLoader();
-        });
 
         showControls();
         updatePlayButton();
