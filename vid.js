@@ -811,7 +811,6 @@
             || (navigator.maxTouchPoints > 1);
     }
 
-    /* ===== FIX 3: formatTime يدعم ساعات بشكل صحيح 1:10:17 ===== */
     function formatTime(s) {
         if (isNaN(s) || s < 0) return '0:00';
         s = Math.floor(s);
@@ -901,7 +900,7 @@
         let backdropEl    = null;
         let isAnimating   = false;
 
-        /* ===== FIX 1: متغير لمنع تمرير النقر للفيديو عند إغلاق القائمة ===== */
+        /* FIX 1: متغير لمنع تمرير النقر للفيديو عند إغلاق القائمة */
         let menuJustClosed = false;
 
         function getSpeedLabel(s) {
@@ -971,14 +970,12 @@
             bd.className = 'cvp-backdrop';
             bd.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
-                /* FIX 1: نضع العلامة قبل الإغلاق */
                 menuJustClosed = true;
                 closeAll();
                 setTimeout(() => { menuJustClosed = false; }, 300);
             });
             bd.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
-                /* FIX 1: نضع العلامة قبل الإغلاق */
                 menuJustClosed = true;
                 closeAll();
                 setTimeout(() => { menuJustClosed = false; }, 300);
@@ -1269,9 +1266,15 @@
 
         allPlayers.push({ videoElement, wrapper, saveCurrentPosition, saveCurrentVolume });
 
-        /* إدارة ظهور عناصر التحكم */
+        /* =========================================================
+           إدارة ظهور عناصر التحكم
+           — isDragging: true طالما يجري سحب شريط التقدم أو الصوت
+             (ماوس أو لمس)، مما يمنع scheduleHide من إخفاء الشريط
+        ========================================================= */
         let hideTimeout = null;
         let mobileControlsVisible = false;
+        // ★ الإضافة الجديدة: علم السحب النشط
+        let isDragging = false;
 
         function showControls() {
             wrapper.classList.add('controls-visible');
@@ -1282,8 +1285,11 @@
         }
         function scheduleHide() {
             clearTimeout(hideTimeout);
+            // ★ لا تخفِ أدوات التحكم إذا كان هناك سحب نشط
+            if (isDragging) return;
             hideTimeout = setTimeout(() => {
-                if (!videoElement.paused) {
+                // ★ تحقق مجدداً قبل الإخفاء الفعلي
+                if (!videoElement.paused && !isDragging) {
                     wrapper.classList.remove('controls-visible');
                     wrapper.classList.add('cursor-hidden');
                     if (isMobileDevice()) {
@@ -1302,7 +1308,8 @@
             if (!videoElement.paused) scheduleHide();
         });
         wrapper.addEventListener('mouseleave', () => {
-            if (!videoElement.paused) {
+            // ★ لا تخفِ أدوات التحكم عند مغادرة الماوس إذا كان هناك سحب نشط
+            if (!videoElement.paused && !isDragging) {
                 clearTimeout(hideTimeout);
                 wrapper.classList.remove('controls-visible');
                 wrapper.classList.remove('cursor-hidden');
@@ -1371,6 +1378,9 @@
         progressTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             seekingProgress = true;
+            // ★ بدء السحب: أثبّت أدوات التحكم
+            isDragging = true;
+            showControls();
             progressTrack.classList.add('dragging');
             applySeekPct(getPctFromEvent(e, progressTrack));
         });
@@ -1388,9 +1398,19 @@
             if (seekingProgress) {
                 seekingProgress = false;
                 progressTrack.classList.remove('dragging');
+                // ★ انتهى السحب: أعد جدولة الإخفاء إن كان الفيديو يعمل
+                isDragging = seekingVolume; // قد يكون شريط الصوت لا يزال مسحوباً
+                if (!isDragging) {
+                    if (!videoElement.paused) scheduleHide();
+                }
             }
             if (seekingVolume) {
                 seekingVolume = false;
+                // ★ انتهى السحب: أعد جدولة الإخفاء إن كان الفيديو يعمل
+                isDragging = seekingProgress; // قد يكون شريط التقدم لا يزال مسحوباً
+                if (!isDragging) {
+                    if (!videoElement.paused) scheduleHide();
+                }
             }
         });
 
@@ -1405,11 +1425,13 @@
             e.stopPropagation();
             e.preventDefault();
             touchSeekingProgress = true;
+            // ★ بدء السحب باللمس: أثبّت أدوات التحكم
+            isDragging = true;
+            showControls();
             progressTrack.classList.add('dragging');
             const touch = e.touches[0];
             applySeekPct(getPctFromTouch(touch, progressTrack));
             updateTooltip(touch.clientX);
-            showControls();
         }, { passive: false });
 
         progressTrack.addEventListener('touchmove', (e) => {
@@ -1426,12 +1448,20 @@
             e.stopPropagation();
             touchSeekingProgress = false;
             progressTrack.classList.remove('dragging');
-            scheduleHide();
+            // ★ انتهى السحب باللمس
+            isDragging = touchSeekingVolume;
+            if (!isDragging) {
+                scheduleHide();
+            }
         }, { passive: true });
 
         progressTrack.addEventListener('touchcancel', () => {
             touchSeekingProgress = false;
             progressTrack.classList.remove('dragging');
+            isDragging = touchSeekingVolume;
+            if (!isDragging) {
+                if (!videoElement.paused) scheduleHide();
+            }
         }, { passive: true });
 
         /* ===== شريط الصوت - ماوس ===== */
@@ -1447,6 +1477,9 @@
         volumeTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             seekingVolume = true;
+            // ★ بدء سحب الصوت: أثبّت أدوات التحكم
+            isDragging = true;
+            showControls();
             volFromClientX(e.clientX);
         });
 
@@ -1470,13 +1503,15 @@
             e.stopPropagation();
             e.preventDefault();
             touchSeekingVolume = true;
+            // ★ بدء سحب الصوت باللمس: أثبّت أدوات التحكم
+            isDragging = true;
+            showControls();
             volumeTrack.style.height = '6px';
             const touch = e.touches[0];
             const rect = volumeTrack.getBoundingClientRect();
             let x = touch.clientX - rect.left;
             x = Math.max(0, Math.min(x, rect.width));
             setVolume(x / rect.width);
-            showControls();
             clearTimeout(volumeTouchExpandTimer);
         }, { passive: false });
 
@@ -1496,6 +1531,11 @@
             e.stopPropagation();
             touchSeekingVolume = false;
             volumeTrack.style.height = '';
+            // ★ انتهى سحب الصوت باللمس
+            isDragging = touchSeekingProgress;
+            if (!isDragging) {
+                scheduleHide();
+            }
             volumeTouchExpandTimer = setTimeout(() => {
                 volumeWrap.classList.remove('touch-expanded');
             }, 2000);
@@ -1504,6 +1544,10 @@
         volumeTrack.addEventListener('touchcancel', () => {
             touchSeekingVolume = false;
             volumeTrack.style.height = '';
+            isDragging = touchSeekingProgress;
+            if (!isDragging) {
+                if (!videoElement.paused) scheduleHide();
+            }
         }, { passive: true });
 
         videoElement.addEventListener('timeupdate', updateProgressBar);
@@ -1578,7 +1622,7 @@
             }
         }
 
-        /* ===== FIX 2: seekBy لا يغير حالة التشغيل ===== */
+        /* FIX 2: seekBy لا يغير حالة التشغيل */
         function seekBy(seconds) {
             const side = seconds < 0 ? 'left' : 'right';
 
@@ -1597,7 +1641,6 @@
             }
 
             updateProgressBar();
-            /* لا نلمس حالة التشغيل هنا إطلاقاً */
         }
 
         /* =========================================================
@@ -1708,7 +1751,7 @@
             const side   = touchX < rect.width / 2 ? 'left' : 'right';
 
             if (tapCount === 1 && tapSide === side) {
-                /* double tap → تقديم أو تأخير فقط، بدون تغيير حالة التشغيل (FIX 2) */
+                /* double tap → تقديم أو تأخير فقط، بدون تغيير حالة التشغيل */
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 tapSide  = null;
@@ -1759,11 +1802,11 @@
                     break;
                 case 'ArrowRight':
                     e.preventDefault();
-                    seekBy(5);   /* FIX 2: لا يغير حالة التشغيل */
+                    seekBy(5);
                     break;
                 case 'ArrowLeft':
                     e.preventDefault();
-                    seekBy(-5);  /* FIX 2: لا يغير حالة التشغيل */
+                    seekBy(-5);
                     break;
                 case 'ArrowUp':
                     e.preventDefault();
