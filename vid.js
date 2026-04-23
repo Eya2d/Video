@@ -100,7 +100,7 @@
             align-items: flex-end;
         }
         .dideofullscreen .custom-volume:hover {
-            width: 120px !important;
+            width: 136px !important;
         }
         .dideofullscreen .custom-volume.touch-expanded {
             width: 120px !important;
@@ -180,6 +180,15 @@
             opacity: 0.5;
             pointer-events: none;
             cursor: not-allowed;
+        }
+        .custom-video-wrapper button:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 2px #0f85e4 inset;
+        }
+        .custom-video-wrapper .custom-volume:focus-visible, .custom-video-wrapper .custom-progress:focus-visible {
+            box-shadow: 0 0 0 2px #0f85e4;
+            outline: none;
+            border-radius: 10px;
         }
         .custom-controls {
             position: absolute;
@@ -528,8 +537,7 @@
             right: 0;
             bottom: 0;
             z-index: 8;
-            background: linear-gradient(transparent 50%, #12101040 50%),
-            linear-gradient(90deg, #ff00000f, #00ff0005, #0000ff0f);
+            background: linear-gradient(#b2afaf4f 50%, #12101040 50%), linear-gradient(90deg, #ff00000f, #00ff0005, #0000ff0f);
             background-size: 100% 3.5px, 3px 100%;
             animation: scanlines-roll-98c8b647 0.1s linear infinite;
             cursor: pointer;
@@ -1088,7 +1096,7 @@
         const controls = document.createElement('div');
         controls.className = 'custom-controls';
         controls.innerHTML = `
-            <div class="custom-progress">
+            <div class="custom-progress" tabindex="0">
                 <div class="progress-track">
                     <div class="progress-buffered"></div>
                     <div class="progress-fill"></div>
@@ -1102,7 +1110,7 @@
                     <button class="custom-play">${SVG_PLAY}</button>
                     <button class="custom-restart" title="Restart">${SVG_RESTART}</button>
                 </div>
-                <div class="custom-volume">
+                <div class="custom-volume" tabindex="0">
                     <span class="volume-icon">${SVG_VOL_ON}</span>
                     <div class="volume-track-wrap">
                         <div class="volume-track">
