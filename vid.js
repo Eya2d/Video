@@ -35,7 +35,7 @@
         }
         .dideofullscreen .progress-tooltip {
             font-size: 16px;
-            padding: 3px 10px;
+            padding: 5px 10px;
             bottom: 20px;
         }
         .dideofullscreen  .center-play-icon svg {
@@ -158,7 +158,6 @@
             color: #2d94ff;
             font-family: sans-serif;
             font-size: 20px;
-            /*z-index: 20;*/
             background: rgba(0,0,0,0.7);
             padding: 10px 20px;
             border-radius: 30px;
@@ -244,7 +243,6 @@
             display: block;
         }
 
-        /* ===== شريط التقدم المخصص ===== */
         .custom-progress {
             width: 100%;
             margin: 8px 0 12px;
@@ -303,14 +301,14 @@
         }
         .progress-tooltip {
             position: absolute;
-            bottom: 16px;
+            bottom: 20px;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.75);
+            background: rgba(0, 0, 0, 0.75);
             color: #fff;
-            font-size: 11px;
+            font-size: 13px;
             font-family: sans-serif;
-            padding: 2px 7px;
-            border-radius: 4px;
+            padding: 5px 7px;
+            border-radius: 20px;
             pointer-events: none;
             white-space: nowrap;
             opacity: 0;
@@ -321,7 +319,6 @@
             opacity: 1;
         }
 
-        /* ===== شريط الصوت المخصص ===== */
         .custom-volume {
             transition: width 0.3s ease;
             overflow: hidden;
@@ -411,6 +408,67 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
+        /* ===== Volume indicator popup ===== */
+        .cvp-volume-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.85);
+            background: rgba(0, 0, 0, 0.72);
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 14px;
+            padding: 14px 22px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 40;
+            transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+            min-width: 100px;
+        }
+        .cvp-volume-indicator.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .cvp-volume-indicator .cvp-vol-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cvp-volume-indicator .cvp-vol-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+            display: block;
+        }
+        .cvp-volume-indicator .cvp-vol-bar-wrap {
+            width: 80px;
+            height: 4px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .cvp-volume-indicator .cvp-vol-bar-fill {
+            height: 100%;
+            background: #fff;
+            border-radius: 99px;
+            transition: width 0.1s linear;
+        }
+        .cvp-volume-indicator .cvp-vol-pct {
+            font-family: sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1;
+            letter-spacing: 0.5px;
+        }
+
         video::-webkit-media-controls { display: none !important; }
 
         @media (max-width: 600px) {
@@ -466,7 +524,6 @@
             height: 28px !important;
         }
 
-        /* flash overlay للسهام */
         .seek-flash {
             position: absolute;
             z-index: 20;
@@ -490,7 +547,6 @@
         .seek-flash.show  { opacity: 1; }
         .seek-flash svg { width: 18px; height: 18px; fill: white; }
 
-        /* ===== أيقونة التشغيل/الإيقاف في المنتصف ===== */
         .center-play-icon {
             position: absolute;
             z-index: 15;
@@ -537,7 +593,7 @@
             right: 0;
             bottom: 0;
             z-index: 8;
-            background: linear-gradient(#b2afaf4f 50%, #12101040 50%), linear-gradient(90deg, #ff00000f, #00ff0005, #0000ff0f);
+            background: linear-gradient(#b2afaf1c 50%, #12101040 50%), linear-gradient(90deg, #ff00000f, #00ff0005, #0000ff0f);
             background-size: 100% 3.5px, 3px 100%;
             animation: scanlines-roll-98c8b647 0.1s linear infinite;
             cursor: pointer;
@@ -549,7 +605,7 @@
         .xxxxdww {
             height: 100%;
             width: 100%;
-            background-image: url(https://github.com/Eya2d/Video/blob/main/download.webp?raw=true);
+            background-image: url(download.webp);
             background-size: 100% 100%;
         }
         .time, .time1 {
@@ -569,7 +625,6 @@
             background: #ffffffd4;
         }
 
-        /* ===== زر الإعدادات في الزاوية العلوية اليمنى ===== */
         .cvp-settings-corner {
             position: absolute;
             top: 10px;
@@ -584,8 +639,8 @@
         .cvp-settings-btn {
             cursor: pointer;
             border: none;
-            background: rgb(0 0 0 / 20%);
-            padding: 6px;
+            background: #0000;
+            padding: 0 !important;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -597,20 +652,20 @@
             z-index: 1;
         }
         .cvp-settings-btn:hover {
-            background: rgba(0,0,0,0.65);
+            background: #0000;
         }
         .cvp-settings-btn svg {
-            width: 20px;
-            height: 20px;
+            width: 26px;
+            height: 26px;
             fill: white;
             display: block;
+            filter: drop-shadow(0px 0px 3px #00000085);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .cvp-settings-btn.open svg {
             transform: rotate(90deg);
         }
 
-        /* ===== الطبقة الشفافة (backdrop) ===== */
         .cvp-backdrop {
             position: absolute;
             inset: 0;
@@ -631,7 +686,6 @@
             to   { opacity: 0; }
         }
 
-        /* ===== القائمة الرئيسية للإعدادات ===== */
         .cvp-settings-menu {
             position: absolute;
             top: 44px;
@@ -696,7 +750,29 @@
             fill: rgba(255,255,255,0.55);
         }
 
-        /* ===== قائمة السرعة ===== */
+        /* ===== toast notification ===== */
+        .cvp-toast {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 13px;
+            padding: 7px 16px;
+            border-radius: 20px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 50;
+            white-space: nowrap;
+        }
+        .cvp-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
         .cvp-speed-menu {
             position: absolute;
             max-height: 250px;
@@ -754,6 +830,7 @@
             font-family: sans-serif;
             font-size: 13px;
             flex: 1;
+            width: max-content;
         }
         .cvp-speed-option {
             display: flex;
@@ -817,7 +894,7 @@
     const SVG_SAVE_INACTIVE = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M352 48H160a48 48 0 00-48 48v368l144-128 144 128V96a48 48 0 00-48-48z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" style="stroke-width: 38px;"/></svg>`;
     const SVG_SAVE_ACTIVE   = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M400 480a16 16 0 01-10.63-4L256 357.41 122.63 476A16 16 0 0196 464V96a64.07 64.07 0 0164-64h192a64.07 64.07 0 0164 64v368a16 16 0 01-16 16z"/></svg>`;
 
-    const SVG_SETTINGS = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><circle cx="256" cy="256" r="48" style="&#10;    fill: #ffffff00;&#10;"/><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
+    const SVG_SETTINGS = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><circle cx="256" cy="256" r="48" style="fill: #ffffff00;"/><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
 
     const SVG_SPEED = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48C141.13 48 48 141.13 48 256s93.13 208 208 208 208-93.13 208-208S370.87 48 256 48zm0 375.08a167.08 167.08 0 110-334.16 167.08 167.08 0 010 334.16z"/><path d="M256 128a16 16 0 000 32 96 96 0 11-96 96 16 16 0 00-32 0 128 128 0 10128-128zM280 234.67V144a16 16 0 00-32 0v96a16 16 0 008 13.86l48 27.71a16 16 0 1016-27.71z"/></svg>`;
 
@@ -825,9 +902,11 @@
     const SVG_ARROW_LEFT  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M328 112L184 256l144 144"/></svg>`;
     const SVG_CHECK       = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="none" stroke="#2196F3" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M416 128L192 384l-96-96"/></svg>`;
 
+    const SVG_COPY_LINK = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M208 352h-48a96 96 0 010-192h48M304 160h48a96 96 0 010 192h-48M163.29 256h187.42" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="36"/></svg>`;
+    const SVG_SHARE     = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><circle cx="128" cy="256" r="48" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="384" cy="112" r="48" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="384" cy="400" r="48" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M169.83 279.53l172.34 96.94M342.17 135.53l-172.34 96.94"/></svg>`;
+
     const SPEED_OPTIONS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
     const DEFAULT_SPEED = 1;
-
     const ANIM_DURATION = 180;
 
     function isMobileDevice() {
@@ -883,7 +962,51 @@
         wrapper.appendChild(flashLeft);
         wrapper.appendChild(flashRight);
 
-        /* أيقونة التشغيل/الإيقاف في المنتصف */
+        /* toast notification */
+        const toastEl = document.createElement('div');
+        toastEl.className = 'cvp-toast';
+        wrapper.appendChild(toastEl);
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toastEl.textContent = msg;
+            toastEl.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+        }
+
+        /* ===== Volume Indicator Popup ===== */
+        const volumeIndicator = document.createElement('div');
+        volumeIndicator.className = 'cvp-volume-indicator';
+        volumeIndicator.innerHTML = `
+            <div class="cvp-vol-icon">${SVG_VOL_ON}</div>
+            <div class="cvp-vol-bar-wrap">
+                <div class="cvp-vol-bar-fill" style="width:100%"></div>
+            </div>
+            <div class="cvp-vol-pct">100%</div>
+        `;
+        wrapper.appendChild(volumeIndicator);
+
+        let volIndicatorTimer = null;
+
+        function showVolumeIndicator(vol) {
+            const pct = Math.round(vol * 100);
+            const iconEl   = volumeIndicator.querySelector('.cvp-vol-icon');
+            const barFill  = volumeIndicator.querySelector('.cvp-vol-bar-fill');
+            const pctLabel = volumeIndicator.querySelector('.cvp-vol-pct');
+
+            iconEl.innerHTML   = (vol === 0) ? SVG_VOL_OFF : SVG_VOL_ON;
+            barFill.style.width = pct + '%';
+            pctLabel.textContent = pct + '%';
+
+            volumeIndicator.classList.add('show');
+            clearTimeout(volIndicatorTimer);
+            volIndicatorTimer = setTimeout(() => {
+                volumeIndicator.classList.remove('show');
+            }, 1200);
+        }
+
+        /* center play/pause icon */
         const centerIcon = document.createElement('div');
         centerIcon.className = 'center-play-icon';
         centerIcon.innerHTML = SVG_PLAY;
@@ -907,13 +1030,13 @@
         scanlineDiv.innerHTML = '<div class="xxxxdww"></div>';
         wrapper.appendChild(scanlineDiv);
 
-        /* ===== زر الإعدادات ===== */
+        /* ===== Settings Button ===== */
         const settingsCorner = document.createElement('div');
         settingsCorner.className = 'cvp-settings-corner';
 
         const settingsBtn = document.createElement('button');
         settingsBtn.className = 'cvp-settings-btn';
-        settingsBtn.title = 'الإعدادات';
+        settingsBtn.title = 'Settings';
         settingsBtn.innerHTML = SVG_SETTINGS;
 
         settingsCorner.appendChild(settingsBtn);
@@ -923,22 +1046,55 @@
         let activeMenuEl  = null;
         let backdropEl    = null;
         let isAnimating   = false;
-
-        /* متغير لمنع تمرير النقر للفيديو عند إغلاق القائمة */
         let menuJustClosed = false;
-
-        /*
-         * ★ isDragging ★
-         * يُضبط على true فور بدء أي سحب (شريط التقدم أو الصوت، ماوس أو لمس)
-         * ويُعاد إلى false عند رفع الإصبع/الزر.
-         * طالما isDragging === true:
-         *   - scheduleHide() لا تُجدوِل أي إخفاء
-         *   - mouseleave لا يُخفي عناصر التحكم
-         */
         let isDragging = false;
 
         function getSpeedLabel(s) {
-            return s === 1 ? 'عادي' : s + 'x';
+            return s === 1 ? 'Normal' : s + 'x';
+        }
+
+        /* ===== Copy video link ===== */
+        function copyVideoLink() {
+            const src = videoElement.src || videoElement.currentSrc || window.location.href;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(src).then(() => {
+                    showToast('Link copied');
+                }).catch(() => {
+                    fallbackCopy(src);
+                });
+            } else {
+                fallbackCopy(src);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast('Link copied');
+            } catch(e) {
+                showToast('❌ Copy failed');
+            }
+            document.body.removeChild(ta);
+        }
+
+        /* ===== Share video ===== */
+        function shareVideo() {
+            const src = videoElement.src || videoElement.currentSrc || window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title || 'Share Video',
+                    url: src
+                }).catch(() => {});
+            } else {
+                copyVideoLink();
+                showToast('✅ Link copied for sharing');
+            }
         }
 
         function buildSettingsMenu() {
@@ -947,16 +1103,34 @@
             menu.innerHTML = `
                 <button class="cvp-settings-menu-item cvp-speed-trigger">
                     ${SVG_SPEED}
-                    <span>سرعة التشغيل</span>
+                    <span>Playback Speed</span>
                     <span class="cvp-menu-item-right">
                         <span class="cvp-current-speed-label">${getSpeedLabel(currentSpeed)}</span>
                         ${SVG_ARROW_RIGHT}
                     </span>
                 </button>
+                <button class="cvp-settings-menu-item cvp-copy-link-btn">
+                    ${SVG_COPY_LINK}
+                    <span>Copy Video Link</span>
+                </button>
+                <button class="cvp-settings-menu-item cvp-share-btn">
+                    ${SVG_SHARE}
+                    <span>Share Video</span>
+                </button>
             `;
             menu.querySelector('.cvp-speed-trigger').addEventListener('click', (e) => {
                 e.stopPropagation();
                 swapMenu('speed');
+            });
+            menu.querySelector('.cvp-copy-link-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAll();
+                copyVideoLink();
+            });
+            menu.querySelector('.cvp-share-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAll();
+                shareVideo();
             });
             menu.addEventListener('click', (e) => e.stopPropagation());
             return menu;
@@ -967,12 +1141,12 @@
             menu.className = 'cvp-speed-menu';
             let html = `
                 <div class="cvp-speed-menu-header">
-                    <button class="cvp-speed-back-btn" title="رجوع">${SVG_ARROW_LEFT}</button>
-                    <span class="cvp-speed-menu-title">سرعة التشغيل</span>
+                    <button class="cvp-speed-back-btn" title="Back">${SVG_ARROW_LEFT}</button>
+                    <span class="cvp-speed-menu-title">Playback Speed</span>
                 </div>
             `;
             SPEED_OPTIONS.forEach(speed => {
-                const label       = speed === 1 ? 'عادي (1x)' : speed + 'x';
+                const label       = speed === 1 ? 'Normal (1x)' : speed + 'x';
                 const activeClass = speed === currentSpeed ? 'active' : '';
                 html += `
                     <button class="cvp-speed-option ${activeClass}" data-speed="${speed}">
@@ -1092,7 +1266,7 @@
             }
         });
 
-        /* ===== شريط التحكم ===== */
+        /* ===== Controls Bar ===== */
         const controls = document.createElement('div');
         controls.className = 'custom-controls';
         controls.innerHTML = `
@@ -1123,7 +1297,7 @@
                 <div class="time">00:00</div>
                 </div>
                 <div class="coooomf">
-                    <button class="Video-save" title="حفظ موضع التشغيل">${SVG_SAVE_INACTIVE}</button>
+                    <button class="Video-save" title="Save playback position">${SVG_SAVE_INACTIVE}</button>
                     <button class="veowc2s0d" title="Old TV quality"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16" width="16" height="16"> <path fill="currentColor" fill-rule="evenodd" d="M3 3.5h10A1.5 1.5 0 0 1 14.5 5v5a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 10V5A1.5 1.5 0 0 1 3 3.5m-.21 9.493A3 3 0 0 1 0 10V5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v5a3 3 0 0 1-2.79 2.993l.46.922a.75.75 0 1 1-1.34.67L11.536 13H4.464l-.793 1.585a.75.75 0 1 1-1.342-.67z" clip-rule="evenodd"/> </svg></button>
                     <button class="custom-fullscreen">${SVG_FULLSCREEN_ENTER}</button>
                 </div>
@@ -1148,9 +1322,9 @@
         const totalTimeDisplay = controls.querySelector('.time1');
         const toggleScanBtn    = controls.querySelector('.veowc2s0d');
         const saveBtn          = controls.querySelector('.Video-save');
+        const volumeTrackDiv   = volumeTrack;
 
         const allButtons = [playBtn, restartBtn, fullscreenBtn, toggleScanBtn, saveBtn, volumeIcon];
-        const volumeTrackDiv = volumeTrack;
 
         function setControlsDisabled(disabled) {
             allButtons.forEach(btn => {
@@ -1195,7 +1369,7 @@
 
         videoElement.addEventListener('durationchange', updateTotalTimeDisplay);
 
-        /* حفظ واستعادة مستوى الصوت */
+        /* Save and restore volume */
         let volumeStorageKey = null;
         function getVolumeKey() {
             if (!volumeStorageKey) volumeStorageKey = getStorageKey(videoElement, 'vol');
@@ -1221,12 +1395,12 @@
                             videoElement.muted = false;
                             videoElement.volume = Math.min(1, Math.max(0, vol));
                         }
-                        setVolume(videoElement.muted ? 0 : videoElement.volume);
+                        setVolume(videoElement.muted ? 0 : videoElement.volume, false);
                     }
                 } else {
-                    setVolume(1);
+                    setVolume(1, false);
                 }
-            } catch(e) { setVolume(1); }
+            } catch(e) { setVolume(1, false); }
         }
 
         let isSaving    = false;
@@ -1301,7 +1475,7 @@
         allPlayers.push({ videoElement, wrapper, saveCurrentPosition, saveCurrentVolume });
 
         /* =========================================================
-           إدارة ظهور عناصر التحكم
+           Controls visibility management
         ========================================================= */
         let hideTimeout = null;
         let mobileControlsVisible = false;
@@ -1316,7 +1490,6 @@
 
         function scheduleHide() {
             clearTimeout(hideTimeout);
-            /* ★ لا نُجدوِل الإخفاء أثناء السحب */
             if (isDragging) return;
             hideTimeout = setTimeout(() => {
                 if (!videoElement.paused && !isDragging) {
@@ -1340,7 +1513,6 @@
         });
 
         wrapper.addEventListener('mouseleave', () => {
-            /* ★ لا نُخفي إذا كان هناك سحب نشط خارج الـ wrapper */
             if (isDragging) return;
             if (!videoElement.paused) {
                 clearTimeout(hideTimeout);
@@ -1406,13 +1578,12 @@
             progressTooltip.style.left = x + 'px';
         }
 
-        /* ===== شريط التقدم - ماوس ===== */
+        /* ===== Progress bar - mouse ===== */
         let seekingProgress = false;
 
         progressTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             seekingProgress = true;
-            /* ★ بدء السحب: أبقِ Controls ظاهرة */
             isDragging = true;
             showControls();
             clearTimeout(hideTimeout);
@@ -1433,14 +1604,11 @@
             if (seekingProgress) {
                 seekingProgress = false;
                 progressTrack.classList.remove('dragging');
-                /* ★ انتهاء السحب */
                 isDragging = false;
-                /* إذا كان الفيديو يعمل وليس داخل الـ wrapper → جدوِل الإخفاء */
                 if (!videoElement.paused) scheduleHide();
             }
             if (seekingVolume) {
                 seekingVolume = false;
-                /* ★ انتهاء السحب */
                 isDragging = false;
                 if (!videoElement.paused) scheduleHide();
             }
@@ -1450,14 +1618,13 @@
             updateTooltip(e.clientX);
         });
 
-        /* ===== شريط التقدم - لمس ===== */
+        /* ===== Progress bar - touch ===== */
         let touchSeekingProgress = false;
 
         progressTrack.addEventListener('touchstart', (e) => {
             e.stopPropagation();
             e.preventDefault();
             touchSeekingProgress = true;
-            /* ★ بدء السحب باللمس */
             isDragging = true;
             showControls();
             clearTimeout(hideTimeout);
@@ -1481,7 +1648,6 @@
             e.stopPropagation();
             touchSeekingProgress = false;
             progressTrack.classList.remove('dragging');
-            /* ★ انتهاء السحب باللمس */
             isDragging = false;
             scheduleHide();
         }, { passive: true });
@@ -1489,11 +1655,10 @@
         progressTrack.addEventListener('touchcancel', () => {
             touchSeekingProgress = false;
             progressTrack.classList.remove('dragging');
-            /* ★ إلغاء السحب باللمس */
             isDragging = false;
         }, { passive: true });
 
-        /* ===== شريط الصوت - ماوس ===== */
+        /* ===== Volume bar - mouse ===== */
         let seekingVolume = false;
 
         function volFromClientX(clientX) {
@@ -1506,14 +1671,13 @@
         volumeTrack.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             seekingVolume = true;
-            /* ★ بدء السحب */
             isDragging = true;
             showControls();
             clearTimeout(hideTimeout);
             volFromClientX(e.clientX);
         });
 
-        /* ===== شريط الصوت - لمس ===== */
+        /* ===== Volume bar - touch ===== */
         let touchSeekingVolume = false;
         let volumeTouchExpandTimer = null;
 
@@ -1533,7 +1697,6 @@
             e.stopPropagation();
             e.preventDefault();
             touchSeekingVolume = true;
-            /* ★ بدء السحب باللمس */
             isDragging = true;
             showControls();
             clearTimeout(hideTimeout);
@@ -1562,7 +1725,6 @@
             e.stopPropagation();
             touchSeekingVolume = false;
             volumeTrack.style.height = '';
-            /* ★ انتهاء السحب باللمس */
             isDragging = false;
             scheduleHide();
             volumeTouchExpandTimer = setTimeout(() => {
@@ -1573,14 +1735,14 @@
         volumeTrack.addEventListener('touchcancel', () => {
             touchSeekingVolume = false;
             volumeTrack.style.height = '';
-            /* ★ إلغاء السحب باللمس */
             isDragging = false;
         }, { passive: true });
 
         videoElement.addEventListener('timeupdate', updateProgressBar);
         videoElement.addEventListener('progress', updateBuffered);
 
-        function setVolume(vol) {
+        /* showIndicator: true by default, pass false to skip popup (e.g. on restore) */
+        function setVolume(vol, showIndicator) {
             vol = Math.max(0, Math.min(1, vol));
             videoElement.volume = vol;
             videoElement.muted = (vol === 0);
@@ -1588,6 +1750,9 @@
             volumeThumb.style.left = (vol * 100) + '%';
             volumeIcon.innerHTML = (vol === 0) ? SVG_VOL_OFF : SVG_VOL_ON;
             saveCurrentVolume();
+            if (showIndicator !== false) {
+                showVolumeIndicator(vol);
+            }
         }
 
         function toggleMute() {
@@ -1626,7 +1791,7 @@
         }
 
         /* =========================================================
-           نظام تراكم الـ seek (السهام واللمس)
+           Seek accumulation system
         ========================================================= */
         let seekAccumLeft  = 0;
         let seekAccumRight = 0;
@@ -1670,9 +1835,8 @@
         }
 
         /* =========================================================
-           منطق اللمس على الهاتف
+           Mobile touch logic
         ========================================================= */
-
         const SCROLL_THRESHOLD = 10;
         const TAP_MOVE_LIMIT   = 8;
         const TAP_DELAY        = 300;
@@ -1809,7 +1973,7 @@
             touchIsScrolling = false;
         }, { passive: true });
 
-        /* ===== لوحة المفاتيح ===== */
+        /* ===== Keyboard ===== */
         wrapper.setAttribute('tabindex', '0');
         wrapper.addEventListener('keydown', (e) => {
             switch (e.key) {
@@ -1828,12 +1992,14 @@
                     seekBy(-5);
                     break;
                 case 'ArrowUp':
+                    /* Increase volume by 1% with up arrow */
                     e.preventDefault();
-                    setVolume(videoElement.volume + 0.1);
+                    setVolume(Math.round((videoElement.volume + 0.01) * 100) / 100);
                     break;
                 case 'ArrowDown':
+                    /* Decrease volume by 1% with down arrow */
                     e.preventDefault();
-                    setVolume(videoElement.volume - 0.1);
+                    setVolume(Math.round((videoElement.volume - 0.01) * 100) / 100);
                     break;
                 case 'f':
                     e.preventDefault();
