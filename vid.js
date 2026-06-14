@@ -16,10 +16,15 @@
         }
         .dideofullscreen .custom-buttons button {
             height: 34px;
+            width: 44px;
         }
         .dideofullscreen .custom-buttons button svg {
             width: 24px;
             height: 24px;
+        }
+        .dideofullscreen .custom-restart svg {
+            width: 24px !important;
+            height: 24px !important;
         }
         .dideofullscreen .ccvvvvf00f {
             height: 34px;
@@ -35,8 +40,9 @@
         }
         .dideofullscreen .progress-tooltip {
             font-size: 16px;
-            padding: 5px 10px;
-            bottom: 20px;
+            height: 28px;
+            padding: 0 10px;
+            bottom: 26px;
         }
         .dideofullscreen  .center-play-icon svg {
             width: 44px;
@@ -112,6 +118,13 @@
             max-height: 250px !important;
             top: 44px !important;
             bottom: auto !important;
+        }
+        .dideofullscreen .progress-track::before {
+            top: -22px !important;
+            bottom: -22px !important;
+        }
+        .dideofullscreen .custom-volume.volume-dragging {
+            width: 136px !important;
         }
 
         @media (hover: none) and (pointer: coarse) {
@@ -261,8 +274,9 @@
             align-items: center;
         }
         .custom-buttons button {
-            padding: 0px 10px;
+            padding: 0px 0px;
             height: 30px;
+            width: 38px;
             border: none;
             background: #ffffff22;
             color: #ffffff;
@@ -355,20 +369,25 @@
         .progress-tooltip {
             position: absolute;
             bottom: 20px;
+            margin-bottom: -10px;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.75);
             color: #fff;
             font-size: 13px;
             font-family: sans-serif;
-            padding: 5px 7px;
+            display: flex;
+            align-items: center;
+            height: 25px;
+            padding: 0px 7px;
             border-radius: 20px;
             pointer-events: none;
             white-space: nowrap;
             opacity: 0;
-            transition: opacity 0.15s;
+            transition: opacity 0.15s, margin 0.15s;
         }
         .progress-track:hover .progress-tooltip,
         .progress-track.dragging .progress-tooltip {
+            margin-bottom: -0px;
             opacity: 1;
         }
 
@@ -394,6 +413,12 @@
         .custom-volume.volume-dragging .volume-track-wrap {
             opacity: 1 !important;
         }
+        .custom-volume.volume-dragging .volume-fill {
+            transition: none !important;
+        }
+        .custom-volume.volume-dragging .volume-thumb {
+            transition: none !important;
+        }
         .custom-volume.touch-expanded {
             width: 120px;
         }
@@ -413,8 +438,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             flex-shrink: 0;
         }
         .custom-volume .volume-icon svg {
@@ -462,7 +487,7 @@
             left: 0; top: 0; bottom: 0;
             background: #fff;
             border-radius: 99px;
-            width: 100%;
+            width: 0%;
             pointer-events: none;
             transition: all 0.15s ease;
         }
@@ -475,7 +500,7 @@
             background: #fff;
             border-radius: 50%;
             pointer-events: none;
-            transition: transform 0.15s ease;
+            transition: all 0.15s ease;
             box-shadow: 0 0 3px rgba(0,0,0,0.5);
         }
         .volume-track:hover .volume-thumb {
@@ -674,11 +699,12 @@
                         linear-gradient(90deg, #ff00000f, #00ff0005, #0000ff0f);
             background-size: 100% 3.5px, 3px 100%;
             animation: scanlines-roll-98c8b647 0.1s linear infinite;
-            cursor: pointer;
+            /*cursor: pointer;*/
             overflow: hidden;
         }
 
         .xxxxddcvf::before {
+            display: none;
             left: -70px;
             top: 0;
             right: 0;
@@ -701,13 +727,18 @@
         .xxxxdww {
             height: 100%;
             width: 100%;
-            background-image: url(download.webp);
+            background-image: url(https://raw.githubusercontent.com/IconCanyon/images/refs/heads/main/download.webp);
             background-size: 100% 100%;
+        }
+        .xxxxdww svg {
+            height: 100%;
+            width: 100%;
         }
         .time, .time1 {
             font-family: sans-serif;
             margin-right: 3px;
             line-height: 0;
+            font-size: 14px;
         }
         .time {
             margin-left: 3px;
@@ -1082,6 +1113,49 @@
         .cvp-link-btn-ok:hover {
             background: #1e88e5;
         }
+
+        /* ===== Smart Tooltip ===== */
+        .cvp-smart-tooltip {
+            position: fixed;
+            z-index: 999999;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 20px;
+            pointer-events: none;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            letter-spacing: 0.2px;
+            line-height: 1.4;
+        }
+        .cvp-smart-tooltip.cvp-tt-visible {
+            opacity: 1;
+        }
+        .cvp-smart-tooltip::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: 5px solid transparent;
+        }
+        /* Arrow pointing down (tooltip is above element) */
+        .cvp-smart-tooltip.cvp-tt-top::after {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom: none;
+        }
+        /* Arrow pointing up (tooltip is below element) */
+        .cvp-smart-tooltip.cvp-tt-bottom::after {
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-top: none;
+        }
     </style>
     `;
 
@@ -1089,18 +1163,26 @@
 
     const SVG_PLAY    = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M133 440a35.37 35.37 0 01-17.5-4.67c-12-6.8-19.46-20-19.46-34.33V111c0-14.37 7.46-27.53 19.46-34.33a35.13 35.13 0 0135.77.45l247.85 148.36a36 36 0 010 61l-247.89 148.4A35.5 35.5 0 01133 440z"/></svg>`;
     const SVG_PAUSE   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M208 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16zM352 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16z"/></svg>`;
-    const SVG_RESTART = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M320 146s24.36-12-64-12a160 160 0 10160 160" fill="none" stroke="white" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"/><path d="M256 58l80 80-80 80"/></svg>`;
+    const SVG_RESTART = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512" style="     height: 22px;     width: 22px; "><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M320 120l48 48-48 48"></path><path d="M352 168H144a80.24 80.24 0 00-80 80v16M192 392l-48-48 48-48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"></path><path d="M160 344h208a80.24 80.24 0 0080-80v-16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"></path></svg>`;
 
+    // ===== Dynamic Volume SVGs (0 waves, 1 wave, 2 waves, 3 waves) =====
     const SVG_VOL_MUTE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M232 416a23.88 23.88 0 01-14.2-4.68 8.27 8.27 0 01-.66-.51L125.76 336H56a24 24 0 01-24-24V200a24 24 0 0124-24h69.75l91.37-74.81a8.27 8.27 0 01.66-.51A24 24 0 01256 120v272a24 24 0 01-24 24zm-106.18-80zm-.27-159.86z"/><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="36" d="M352 192l96 96M448 192l-96 96"/></svg>`;
+
+    // 1 wave (low volume ≤30%)
     const SVG_VOL_LOW  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M232 416a23.88 23.88 0 01-14.2-4.68 8.27 8.27 0 01-.66-.51L125.76 336H56a24 24 0 01-24-24V200a24 24 0 0124-24h69.75l91.37-74.81a8.27 8.27 0 01.66-.51A24 24 0 01256 120v272a24 24 0 01-24 24zm-106.18-80zm-.27-159.86zM320 336a16 16 0 01-14.29-23.19c9.49-18.87 14.3-38 14.3-56.81 0-19.38-4.66-37.94-14.25-56.73a16 16 0 0128.5-14.54C346.19 208.12 352 231.44 352 256c0 23.86-6 47.81-17.7 71.19A16 16 0 01320 336z"/></svg>`;
+
+    // 2 waves (medium volume ≤60%)
     const SVG_VOL_MED  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M232 416a23.88 23.88 0 01-14.2-4.68 8.27 8.27 0 01-.66-.51L125.76 336H56a24 24 0 01-24-24V200a24 24 0 0124-24h69.75l91.37-74.81a8.27 8.27 0 01.66-.51A24 24 0 01256 120v272a24 24 0 01-24 24zm-106.18-80zm-.27-159.86zM320 336a16 16 0 01-14.29-23.19c9.49-18.87 14.3-38 14.3-56.81 0-19.38-4.66-37.94-14.25-56.73a16 16 0 0128.5-14.54C346.19 208.12 352 231.44 352 256c0 23.86-6 47.81-17.7 71.19A16 16 0 01320 336z"/><path d="M368 384a16 16 0 01-13.86-24C373.05 327.09 384 299.51 384 256c0-44.17-10.93-71.56-29.82-103.94a16 16 0 0127.64-16.12C402.92 172.11 416 204.81 416 256c0 50.43-13.06 83.29-34.13 120a16 16 0 01-13.87 8z"/></svg>`;
+
+    // 3 waves (high volume >60%)
     const SVG_VOL_HIGH = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M232 416a23.88 23.88 0 01-14.2-4.68 8.27 8.27 0 01-.66-.51L125.76 336H56a24 24 0 01-24-24V200a24 24 0 0124-24h69.75l91.37-74.81a8.27 8.27 0 01.66-.51A24 24 0 01256 120v272a24 24 0 01-24 24zm-106.18-80zm-.27-159.86zM320 336a16 16 0 01-14.29-23.19c9.49-18.87 14.3-38 14.3-56.81 0-19.38-4.66-37.94-14.25-56.73a16 16 0 0128.5-14.54C346.19 208.12 352 231.44 352 256c0 23.86-6 47.81-17.7 71.19A16 16 0 01320 336z"/><path d="M368 384a16 16 0 01-13.86-24C373.05 327.09 384 299.51 384 256c0-44.17-10.93-71.56-29.82-103.94a16 16 0 0127.64-16.12C402.92 172.11 416 204.81 416 256c0 50.43-13.06 83.29-34.13 120a16 16 0 01-13.87 8z"/><path d="M416 432a16 16 0 01-13.39-24.74C429.85 365.47 448 323.76 448 256c0-66.5-18.18-108.62-45.49-151.39a16 16 0 1127-17.22C459.81 134.89 480 181.74 480 256c0 64.75-14.66 113.63-50.6 168.74A16 16 0 01416 432z"/></svg>`;
 
+    // Helper: get volume SVG based on level
     function getVolumeSVG(vol) {
         const pct = Math.round(vol * 100);
-        if (pct === 0)   return SVG_VOL_MUTE;
-        if (pct <= 30)   return SVG_VOL_LOW;
-        if (pct <= 60)   return SVG_VOL_MED;
+        if (pct === 0)        return SVG_VOL_MUTE;
+        if (pct <= 30)        return SVG_VOL_LOW;
+        if (pct <= 60)        return SVG_VOL_MED;
         return SVG_VOL_HIGH;
     }
 
@@ -1122,6 +1204,8 @@
 
     const SVG_COPY_LINK = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M208 352h-48a96 96 0 010-192h48M304 160h48a96 96 0 010 192h-48M163.29 256h187.42" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="36"/></svg>`;
     const SVG_SHARE     = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><circle cx="128" cy="256" r="48" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="384" cy="112" r="48" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="384" cy="400" r="48" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M169.83 279.53l172.34 96.94M342.17 135.53l-172.34 96.94"/></svg>`;
+
+    // Enter Link icon (link/chain icon)
     const SVG_ENTER_LINK = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M200.66 352H144a96 96 0 010-192h56.66M312 160h56a96 96 0 010 192h-56.66M169.07 256h175.86" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="36"/></svg>`;
 
     const SPEED_OPTIONS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -1160,35 +1244,6 @@
         });
     });
 
-    // =========================================================
-    // الدالة الجديدة: هل يجب تطبيق البلاير على هذا الفيديو؟
-    // يعمل إذا:
-    //   1. الفيديو نفسه يحمل الـ attribute  video-controls
-    //   2. أو أي عنصر أب (ancestor) يحمل  video-controls
-    // =========================================================
-    function shouldApplyPlayer(videoEl) {
-        // تحقّق من الفيديو نفسه أولاً
-        if (videoEl.hasAttribute('video-controls')) return true;
-        // صعوداً في شجرة الـ DOM
-        let parent = videoEl.parentElement;
-        while (parent && parent !== document.documentElement) {
-            if (parent.hasAttribute('video-controls')) return true;
-            parent = parent.parentElement;
-        }
-        return false;
-    }
-
-    // =========================================================
-    // عند وجود video-controls على عنصر غير <video>، نطبّق
-    // البلاير على كل فيديوهاته الداخلية ديناميكياً
-    // =========================================================
-    function applyToVideosInsideElement(containerEl) {
-        containerEl.querySelectorAll('video:not([data-customized])').forEach(video => {
-            customVideoPlayer(video);
-            video.setAttribute('data-customized', 'true');
-        });
-    }
-
     window.customVideoPlayer = function(videoElement) {
         if (!videoElement) return;
 
@@ -1223,6 +1278,7 @@
         videoElement.parentNode.insertBefore(wrapper, videoElement);
         wrapper.appendChild(videoElement);
 
+        /* Spinner تحميل */
         const spinnerEl = document.createElement('div');
         spinnerEl.className = 'cvp-spinner';
         wrapper.appendChild(spinnerEl);
@@ -1319,6 +1375,7 @@
         let menuJustClosed = false;
         let isDragging = false;
 
+        // ===== Enter Link Dialog =====
         let linkOverlayEl = null;
 
         function openEnterLinkDialog() {
@@ -1345,6 +1402,7 @@
             const btnOk = overlay.querySelector('.cvp-link-btn-ok');
             const btnCancel = overlay.querySelector('.cvp-link-btn-cancel');
 
+            // Pause video when dialog opens
             const wasPlaying = !videoElement.paused;
             if (wasPlaying) videoElement.pause();
 
@@ -1366,6 +1424,7 @@
                     return;
                 }
                 closeLinkDialog();
+                // Apply the new source
                 videoElement.pause();
                 videoElement.src = url;
                 videoElement.load();
@@ -1375,6 +1434,7 @@
             btnOk.addEventListener('click', (e) => { e.stopPropagation(); applyLink(); });
             btnCancel.addEventListener('click', (e) => { e.stopPropagation(); closeLinkDialog(); });
 
+            // Close on overlay background click (not dialog)
             overlay.addEventListener('mousedown', (e) => {
                 if (e.target === overlay) { e.stopPropagation(); closeLinkDialog(); }
             });
@@ -1382,18 +1442,21 @@
                 if (e.target === overlay) { e.stopPropagation(); closeLinkDialog(); }
             }, { passive: true });
 
+            // Enter key in input
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') { e.preventDefault(); applyLink(); }
                 if (e.key === 'Escape') { e.preventDefault(); closeLinkDialog(); }
                 e.stopPropagation();
             });
 
+            // Stop propagation from dialog clicks
             overlay.querySelector('.cvp-link-dialog').addEventListener('click', (e) => e.stopPropagation());
             overlay.addEventListener('click', (e) => e.stopPropagation());
 
             wrapper.appendChild(overlay);
             linkOverlayEl = overlay;
 
+            // Focus input after animation
             setTimeout(() => { input.focus(); }, 50);
         }
 
@@ -1443,10 +1506,33 @@
             }
         }
 
+        function getVideoToolsFlags() {
+            const attrName = videoElement.getAttributeNames()
+                .find(a => a === 'video-tools' || a.startsWith('video-tools-'));
+
+            if (!attrName) return { showEnter: false, showCopy: false, showShare: false };
+
+            if (attrName === 'video-tools') {
+                return { showEnter: true, showCopy: true, showShare: true };
+            }
+
+            const suffix = attrName.slice('video-tools-'.length);
+            const parts  = suffix.split('-');
+
+            return {
+                showEnter : parts.includes('enter'),
+                showCopy  : parts.includes('copy'),
+                showShare : parts.includes('share'),
+            };
+        }
+
         function buildSettingsMenu() {
+            const { showEnter, showCopy, showShare } = getVideoToolsFlags();
+
             const menu = document.createElement('div');
             menu.className = 'cvp-settings-menu';
-            menu.innerHTML = `
+
+            let html = `
                 <button class="cvp-settings-menu-item cvp-speed-trigger">
                     ${SVG_SPEED}
                     <span>Playback Speed</span>
@@ -1455,38 +1541,56 @@
                         ${SVG_ARROW_RIGHT}
                     </span>
                 </button>
+            `;
+            if (showEnter) {
+                html += `
                 <button class="cvp-settings-menu-item cvp-enter-link-btn">
                     ${SVG_ENTER_LINK}
                     <span>Enter Link</span>
-                </button>
+                </button>`;
+            }
+            if (showCopy) {
+                html += `
                 <button class="cvp-settings-menu-item cvp-copy-link-btn">
                     ${SVG_COPY_LINK}
                     <span>Copy Video Link</span>
-                </button>
+                </button>`;
+            }
+            if (showShare) {
+                html += `
                 <button class="cvp-settings-menu-item cvp-share-btn">
                     ${SVG_SHARE}
                     <span>Share Video</span>
-                </button>
-            `;
+                </button>`;
+            }
+
+            menu.innerHTML = html;
+
             menu.querySelector('.cvp-speed-trigger').addEventListener('click', (e) => {
                 e.stopPropagation();
                 swapMenu('speed');
             });
-            menu.querySelector('.cvp-enter-link-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeAll();
-                openEnterLinkDialog();
-            });
-            menu.querySelector('.cvp-copy-link-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeAll();
-                copyVideoLink();
-            });
-            menu.querySelector('.cvp-share-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeAll();
-                shareVideo();
-            });
+            if (showEnter) {
+                menu.querySelector('.cvp-enter-link-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeAll();
+                    openEnterLinkDialog();
+                });
+            }
+            if (showCopy) {
+                menu.querySelector('.cvp-copy-link-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeAll();
+                    copyVideoLink();
+                });
+            }
+            if (showShare) {
+                menu.querySelector('.cvp-share-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeAll();
+                    shareVideo();
+                });
+            }
             menu.addEventListener('click', (e) => e.stopPropagation());
             return menu;
         }
@@ -1555,6 +1659,8 @@
             activeMenuEl = menuEl;
             settingsBtn.classList.add('open');
             wrapper.classList.add('settings-open');
+            // إخفاء الـ tooltip الخاص بزر الإعدادات عند فتح القائمة
+            cvpHideTooltipForEl(settingsBtn);
         }
 
         function unmountCurrent(callback) {
@@ -1621,6 +1727,7 @@
             }
         });
 
+        /* ===== Controls Bar ===== */
         const controls = document.createElement('div');
         controls.className = 'custom-controls';
         controls.innerHTML = `
@@ -1635,11 +1742,11 @@
             <div class="ccvvvvf00f">
                 <div class="kky66657e0">
                 <div class="custom-buttons">
-                    <button class="custom-play">${SVG_PLAY}</button>
-                    <button class="custom-restart" title="Restart">${SVG_RESTART}</button>
+                    <button class="custom-play" title="Play">${SVG_PLAY}</button>
+                    <button class="custom-restart" title="Replay">${SVG_RESTART}</button>
                 </div>
                 <div class="custom-volume" tabindex="0">
-                    <span class="volume-icon">${SVG_VOL_HIGH}</span>
+                    <span class="volume-icon" title="Mute">${SVG_VOL_HIGH}</span>
                     <div class="volume-track-wrap">
                         <div class="volume-track">
                             <div class="volume-fill"></div>
@@ -1653,7 +1760,7 @@
                 <div class="coooomf">
                     <button class="Video-save" title="Save playback position">${SVG_SAVE_INACTIVE}</button>
                     <button class="veowc2s0d" title="Old TV quality"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16" width="16" height="16"> <path fill="currentColor" fill-rule="evenodd" d="M3 3.5h10A1.5 1.5 0 0 1 14.5 5v5a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 10V5A1.5 1.5 0 0 1 3 3.5m-.21 9.493A3 3 0 0 1 0 10V5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v5a3 3 0 0 1-2.79 2.993l.46.922a.75.75 0 1 1-1.34.67L11.536 13H4.464l-.793 1.585a.75.75 0 1 1-1.342-.67z" clip-rule="evenodd"/> </svg></button>
-                    <button class="custom-fullscreen">${SVG_FULLSCREEN_ENTER}</button>
+                    <button class="custom-fullscreen" title="Fullscreen">${SVG_FULLSCREEN_ENTER}</button>
                 </div>
             </div>
         `;
@@ -1680,6 +1787,14 @@
         const volumeTrackDiv   = volumeTrack;
 
         const allButtons = [playBtn, restartBtn, fullscreenBtn, toggleScanBtn, saveBtn, volumeIcon];
+
+        // ===== مراقبة controls-visible لإخفاء الـ tooltip عند اختفاء الـ controls =====
+        const controlsObserver = new MutationObserver(() => {
+            if (!wrapper.classList.contains('controls-visible')) {
+                cvpHideTooltipForWrapper(wrapper);
+            }
+        });
+        controlsObserver.observe(wrapper, { attributes: true, attributeFilter: ['class'] });
 
         wrapper.addEventListener('focusin', (e) => {
             showControls();
@@ -1742,6 +1857,7 @@
 
         videoElement.addEventListener('durationchange', updateTotalTimeDisplay);
 
+        /* Volume storage */
         let volumeStorageKey = null;
         function getVolumeKey() {
             if (!volumeStorageKey) volumeStorageKey = getStorageKey(videoElement, 'vol');
@@ -1905,6 +2021,7 @@
 
         allPlayers.push({ videoElement, wrapper, saveCurrentPosition, saveCurrentVolume });
 
+        /* Controls visibility */
         let hideTimeout = null;
         let mobileControlsVisible = false;
 
@@ -2011,6 +2128,7 @@
             progressTooltip.style.left = x + 'px';
         }
 
+        /* ===== Progress bar - mouse ===== */
         let seekingProgress = false;
 
         progressTrack.addEventListener('mousedown', (e) => {
@@ -2051,6 +2169,7 @@
             updateTooltip(e.clientX);
         });
 
+        /* ===== Progress bar - touch ===== */
         let touchSeekingProgress = false;
 
         progressTrack.addEventListener('touchstart', (e) => {
@@ -2090,6 +2209,7 @@
             isDragging = false;
         }, { passive: true });
 
+        /* ===== Volume bar - mouse ===== */
         let seekingVolume = false;
 
         function volFromClientX(clientX) {
@@ -2109,6 +2229,7 @@
             volFromClientX(e.clientX);
         });
 
+        /* ===== Volume bar - touch ===== */
         let touchSeekingVolume = false;
         let volumeTouchExpandTimer = null;
 
@@ -2179,6 +2300,9 @@
             volumeFill.style.width = (vol * 100) + '%';
             volumeThumb.style.left = (vol * 100) + '%';
             volumeIcon.innerHTML = getVolumeSVG(vol);
+            const volLbl = (vol === 0) ? 'Unmute' : 'Mute';
+            if (volumeIcon.getAttribute('data-cvp-title')) volumeIcon.setAttribute('data-cvp-title', volLbl);
+            else volumeIcon.title = volLbl;
             saveCurrentVolume();
             if (showIndicator !== false) {
                 showVolumeIndicator(vol);
@@ -2197,6 +2321,9 @@
 
         function updatePlayButton() {
             playBtn.innerHTML = videoElement.paused ? SVG_PLAY : SVG_PAUSE;
+            const lbl = videoElement.paused ? 'Play' : 'Pause';
+            if (playBtn.getAttribute('data-cvp-title')) playBtn.setAttribute('data-cvp-title', lbl);
+            else playBtn.title = lbl;
         }
         function pauseOthers() {
             allPlayers.forEach(p => {
@@ -2224,6 +2351,7 @@
                 return;
             }
             pauseOthers();
+            const wasPlaying = !videoElement.paused;
             videoElement.pause();
             if (typeof videoElement.fastSeek === 'function') {
                 videoElement.fastSeek(0);
@@ -2245,6 +2373,9 @@
             }, 300);
         }
 
+        /* =========================================================
+           Debounce للأسهم
+        ========================================================= */
         const ARROW_SEEK_DEBOUNCE = 300;
         let arrowSeekTimer = null;
         let arrowSeekAccum = 0;
@@ -2281,6 +2412,9 @@
             updateProgressBar();
         }
 
+        /* =========================================================
+           Seek accumulation system
+        ========================================================= */
         let seekAccumLeft  = 0;
         let seekAccumRight = 0;
         let seekResetTimerLeft  = null;
@@ -2332,6 +2466,9 @@
             updateProgressBar();
         }
 
+        /* =========================================================
+           Mobile touch logic
+        ========================================================= */
         const SCROLL_THRESHOLD = 10;
         const TAP_MOVE_LIMIT   = 8;
         const TAP_DELAY        = 300;
@@ -2468,6 +2605,9 @@
             touchIsScrolling = false;
         }, { passive: true });
 
+        /* =========================================================
+           Keyboard
+        ========================================================= */
         wrapper.setAttribute('tabindex', '0');
 
         let currentFocusedEl = null;
@@ -2580,6 +2720,9 @@
 
         function updateFullscreenButton() {
             fullscreenBtn.innerHTML = document.fullscreenElement ? SVG_FULLSCREEN_EXIT : SVG_FULLSCREEN_ENTER;
+            const lbl = document.fullscreenElement ? 'Exit Fullscreen' : 'Fullscreen';
+            if (fullscreenBtn.getAttribute('data-cvp-title')) fullscreenBtn.setAttribute('data-cvp-title', lbl);
+            else fullscreenBtn.title = lbl;
         }
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
@@ -2641,22 +2784,10 @@
         return wrapper;
     };
 
-    // =========================================================
-    // applyToAllVideos — المنطق المُعدَّل
-    // =========================================================
     window.applyToAllVideos = function() {
-        // 1. فيديوهات تحمل video-controls مباشرة
-        document.querySelectorAll('video[video-controls]:not([data-customized])').forEach(video => {
+        document.querySelectorAll('video:not([data-customized])').forEach(video => {
             customVideoPlayer(video);
             video.setAttribute('data-customized', 'true');
-        });
-
-        // 2. فيديوهات داخل عناصر تحمل video-controls (أي عنصر غير video)
-        document.querySelectorAll('[video-controls]:not(video)').forEach(container => {
-            container.querySelectorAll('video:not([data-customized])').forEach(video => {
-                customVideoPlayer(video);
-                video.setAttribute('data-customized', 'true');
-            });
         });
     };
 
@@ -2666,9 +2797,10 @@
         applyToAllVideos();
     }
 
-    // =========================================================
-    // keyboard-nav-active
-    // =========================================================
+    /* =========================================================
+       keyboard-nav-active: يُفعَّل عند Tab، يُلغى عند الماوس
+       يُضاف مرة واحدة فقط في الصفحة
+    ========================================================= */
     if (!window._cvpKeyboardNavInit) {
         window._cvpKeyboardNavInit = true;
         document.addEventListener('keydown', (e) => {
@@ -2686,41 +2818,275 @@
         });
     }
 
-    // =========================================================
-    // MutationObserver — يراقب الإضافات الجديدة
-    // =========================================================
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-            mutation.addedNodes.forEach(node => {
-                if (node.nodeType !== 1) return; // عناصر HTML فقط
+    /* =========================================================
+       Smart Tooltip System
+       يراقب title="" على جميع العناصر داخل custom-video-wrapper
+       ويعرضها في الموضع الأنسب (أعلى/أسفل، يمين/يسار)
+       مع دعم كامل لوضع ملء الشاشة (fullscreen)
+    ========================================================= */
+    if (!window._cvpTooltipInit) {
+        window._cvpTooltipInit = true;
 
-                // حالة 1: العنصر المضاف هو <video> مباشرة
-                if (node.tagName === 'VIDEO') {
-                    if (!node.hasAttribute('data-customized') && shouldApplyPlayer(node)) {
-                        customVideoPlayer(node);
-                        node.setAttribute('data-customized', 'true');
-                    }
-                } else {
-                    // حالة 2: العنصر المضاف يحمل video-controls بنفسه
-                    if (node.hasAttribute('video-controls')) {
-                        applyToVideosInsideElement(node);
-                    }
-                    // حالة 3: العنصر المضاف يحتوي على عناصر تحمل video-controls أو فيديوهات
-                    // نبحث عن فيديوهات تستحق التطبيق
-                    node.querySelectorAll('video:not([data-customized])').forEach(video => {
-                        if (shouldApplyPlayer(video)) {
-                            customVideoPlayer(video);
-                            video.setAttribute('data-customized', 'true');
-                        }
-                    });
-                    // نبحث أيضاً عن حاويات [video-controls] جديدة داخل العنصر المضاف
-                    node.querySelectorAll('[video-controls]:not(video)').forEach(container => {
-                        applyToVideosInsideElement(container);
-                    });
+        // إنشاء عنصر tooltip واحد يُعاد استخدامه
+        const cvpTooltipEl = document.createElement('div');
+        cvpTooltipEl.className = 'cvp-smart-tooltip';
+        document.body.appendChild(cvpTooltipEl);
+
+        // متغيرات الحالة
+        let cvpTTTimer     = null;
+        let cvpTTShowTimer = null;
+        let cvpTTCurrentEl = null;
+        // العنصر الذي سيتم عرض الـ tooltip له (قيد الانتظار)
+        let cvpTTPendingEl = null;
+
+        // ===== دالة مساعدة: هل العنصر ينتمي لـ settingsBtn مفتوح؟ =====
+        function cvpIsSettingsBtnOpen(el) {
+            // الزر نفسه أو أحد أبنائه
+            const btn = el.closest('.cvp-settings-btn');
+            if (!btn) return false;
+            return btn.classList.contains('open');
+        }
+
+        // ===== إخفاء الـ tooltip لعنصر محدد (إن كان هو الحالي) =====
+        function cvpHideTooltipForEl(el) {
+            if (cvpTTCurrentEl === el || cvpTTPendingEl === el) {
+                cvpHideTooltip();
+            }
+        }
+
+        // ===== إخفاء الـ tooltip إن كان العنصر الحالي داخل wrapper معين =====
+        function cvpHideTooltipForWrapper(wrapper) {
+            if (
+                (cvpTTCurrentEl && wrapper.contains(cvpTTCurrentEl)) ||
+                (cvpTTPendingEl && wrapper.contains(cvpTTPendingEl))
+            ) {
+                cvpHideTooltip();
+            }
+        }
+
+        function cvpPositionTooltip(el) {
+            const titleText = el.getAttribute('data-cvp-title');
+            if (!titleText) return;
+
+            cvpTooltipEl.textContent = titleText;
+            // إزالة كلاسات الاتجاه السابقة
+            cvpTooltipEl.className = 'cvp-smart-tooltip';
+
+            // نحرك العنصر خارج الشاشة مؤقتاً لحساب أبعاده دون تأثير بصري
+            cvpTooltipEl.style.visibility = 'hidden';
+            cvpTooltipEl.style.left = '-9999px';
+            cvpTooltipEl.style.top  = '-9999px';
+
+            // في وضع fullscreen يجب أن يكون الـ tooltip داخل عنصر الـ fullscreen
+            const fsEl = document.fullscreenElement;
+            const parent = (fsEl && fsEl.contains(el)) ? fsEl : document.body;
+            if (cvpTooltipEl.parentNode !== parent) {
+                parent.appendChild(cvpTooltipEl);
+            }
+
+            const elRect = el.getBoundingClientRect();
+            const ttW    = cvpTooltipEl.offsetWidth;
+            const ttH    = cvpTooltipEl.offsetHeight;
+            const margin = 8;
+
+            // حدود منطقة الحساب (viewport أو مستطيل fullscreen)
+            let boundsLeft = 0, boundsTop = 0, boundsRight = window.innerWidth, boundsBottom = window.innerHeight;
+            if (fsEl && fsEl.contains(el)) {
+                const fsRect = fsEl.getBoundingClientRect();
+                boundsLeft   = fsRect.left;
+                boundsTop    = fsRect.top;
+                boundsRight  = fsRect.right;
+                boundsBottom = fsRect.bottom;
+            }
+
+            const spaceAbove = elRect.top - boundsTop;
+
+            // اختيار الاتجاه العمودي
+            let top;
+            if (spaceAbove >= ttH + margin) {
+                top = elRect.top - ttH - margin;
+                cvpTooltipEl.classList.add('cvp-tt-top');
+            } else {
+                top = elRect.bottom + margin;
+                cvpTooltipEl.classList.add('cvp-tt-bottom');
+            }
+
+            // محاذاة أفقية: تمركز على العنصر
+            let left = elRect.left + elRect.width / 2 - ttW / 2;
+
+            // منع الخروج من اليسار
+            if (left < boundsLeft + margin) left = boundsLeft + margin;
+            // منع الخروج من اليمين
+            if (left + ttW > boundsRight - margin) left = boundsRight - ttW - margin;
+
+            cvpTooltipEl.style.left       = left + 'px';
+            cvpTooltipEl.style.top        = top  + 'px';
+            cvpTooltipEl.style.visibility = '';
+        }
+
+        function cvpShowTooltip(el) {
+            const titleText = el.getAttribute('data-cvp-title');
+            if (!titleText) return;
+
+            // لا تعرض الـ tooltip لزر الإعدادات عندما تكون القائمة مفتوحة
+            if (cvpIsSettingsBtnOpen(el)) return;
+
+            // إلغاء أي عرض أو إخفاء معلق
+            clearTimeout(cvpTTTimer);
+            clearTimeout(cvpTTShowTimer);
+
+            cvpTTPendingEl = el;
+
+            // إذا كان هناك tooltip ظاهر لعنصر آخر، أخفه فوراً بدون animation لمنع الشوشرة
+            if (cvpTTCurrentEl && cvpTTCurrentEl !== el && cvpTooltipEl.classList.contains('cvp-tt-visible')) {
+                cvpTooltipEl.classList.remove('cvp-tt-visible');
+                cvpTTCurrentEl = null;
+                // عرض الجديد بعد تأخير قصير جداً لتجنب الوميض
+                cvpTTShowTimer = setTimeout(() => {
+                    if (cvpTTPendingEl !== el) return;
+                    // تحقق مرة أخرى قبل العرض
+                    if (cvpIsSettingsBtnOpen(el)) return;
+                    cvpTTCurrentEl = el;
+                    cvpTTPendingEl = null;
+                    cvpPositionTooltip(el);
+                    cvpTTTimer = setTimeout(() => {
+                        cvpTooltipEl.classList.add('cvp-tt-visible');
+                    }, 60);
+                }, 30);
+            } else {
+                // لا يوجد tooltip ظاهر حالياً، عرض بعد تأخير للـ hover
+                cvpTTShowTimer = setTimeout(() => {
+                    if (cvpTTPendingEl !== el) return;
+                    // تحقق مرة أخرى قبل العرض
+                    if (cvpIsSettingsBtnOpen(el)) return;
+                    cvpTTCurrentEl = el;
+                    cvpTTPendingEl = null;
+                    cvpPositionTooltip(el);
+                    cvpTTTimer = setTimeout(() => {
+                        cvpTooltipEl.classList.add('cvp-tt-visible');
+                    }, 60);
+                }, 80);
+            }
+        }
+
+        function cvpHideTooltip() {
+            clearTimeout(cvpTTTimer);
+            clearTimeout(cvpTTShowTimer);
+            cvpTooltipEl.classList.remove('cvp-tt-visible');
+            cvpTTCurrentEl = null;
+            cvpTTPendingEl = null;
+        }
+
+        // تحديث الموضع عند تغيير حجم النافذة أو السحب (scroll)
+        function cvpUpdatePosition() {
+            if (cvpTTCurrentEl && cvpTooltipEl.classList.contains('cvp-tt-visible')) {
+                cvpPositionTooltip(cvpTTCurrentEl);
+            }
+        }
+        window.addEventListener('resize', cvpUpdatePosition, { passive: true });
+        window.addEventListener('scroll', cvpUpdatePosition, { passive: true });
+
+        // نسخ title إلى data-cvp-title ثم حذفه لمنع tooltip المتصفح الافتراضي
+        function cvpPatchElement(el) {
+            if (el._cvpPatched) return;
+            const title = el.getAttribute('title');
+            if (!title || title.trim() === '') return;
+            el._cvpPatched = true;
+            el.setAttribute('data-cvp-title', title);
+            el.removeAttribute('title');
+
+            // ===== Mouse hover =====
+            el.addEventListener('mouseenter', () => {
+                cvpShowTooltip(el);
+            });
+            el.addEventListener('mouseleave', () => {
+                // إذا هذا العنصر هو المعلق أو الحالي، أخفِ
+                if (cvpTTPendingEl === el || cvpTTCurrentEl === el) {
+                    cvpHideTooltip();
                 }
             });
-        });
-    });
 
+            // ===== Tab / focus (keyboard-nav-active فقط) =====
+            el.addEventListener('focus', () => {
+                if (!document.documentElement.classList.contains('keyboard-nav-active')) return;
+                // لا تعرض الـ tooltip لزر الإعدادات عندما تكون القائمة مفتوحة
+                if (cvpIsSettingsBtnOpen(el)) return;
+                // تأكد أن الـ controls ظاهرة
+                const wrapper = el.closest('.custom-video-wrapper');
+                if (wrapper && !wrapper.classList.contains('controls-visible')) return;
+                cvpShowTooltip(el);
+            });
+            el.addEventListener('blur', () => {
+                if (cvpTTPendingEl === el || cvpTTCurrentEl === el) {
+                    cvpHideTooltip();
+                }
+            });
+
+            // إخفاء عند الضغط أو النقر
+            el.addEventListener('click',     () => { if (cvpTTPendingEl === el || cvpTTCurrentEl === el) cvpHideTooltip(); });
+            el.addEventListener('mousedown', () => { if (cvpTTPendingEl === el || cvpTTCurrentEl === el) cvpHideTooltip(); });
+        }
+
+        // مسح كل العناصر ذات title داخل wrappers
+        function cvpScanWrappers() {
+            document.querySelectorAll(
+                '.custom-video-wrapper [title], .cvp-settings-corner [title]'
+            ).forEach(cvpPatchElement);
+        }
+
+        // مراقبة DOM للعناصر الجديدة أو التغييرات على خاصية title
+        const cvpDomObserver = new MutationObserver(() => {
+            cvpScanWrappers();
+        });
+        cvpDomObserver.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['title']
+        });
+
+        // إخفاء الـ tooltip عند الخروج من fullscreen أو الدخول إليه
+        document.addEventListener('fullscreenchange', () => {
+            cvpHideTooltip();
+            // نعيد إلحاق الـ tooltip بـ body عند الخروج من fullscreen
+            if (!document.fullscreenElement && cvpTooltipEl.parentNode !== document.body) {
+                document.body.appendChild(cvpTooltipEl);
+            }
+        });
+
+        // مسح أولي بعد تحميل DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', cvpScanWrappers);
+        } else {
+            cvpScanWrappers();
+        }
+
+        // تصدير الدوال للاستخدام من داخل customVideoPlayer
+        window._cvpHideTooltipForEl      = cvpHideTooltipForEl;
+        window._cvpHideTooltipForWrapper  = cvpHideTooltipForWrapper;
+        window._cvpHideTooltip            = cvpHideTooltip;
+    }
+
+    // دوال مساعدة تُستخدم داخل customVideoPlayer (تشير للدوال المُعرَّفة في Smart Tooltip)
+    function cvpHideTooltipForEl(el) {
+        if (window._cvpHideTooltipForEl) window._cvpHideTooltipForEl(el);
+    }
+    function cvpHideTooltipForWrapper(wrapper) {
+        if (window._cvpHideTooltipForWrapper) window._cvpHideTooltipForWrapper(wrapper);
+    }
+    function cvpHideTooltip() {
+        if (window._cvpHideTooltip) window._cvpHideTooltip();
+    }
+
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(m => { if (m.addedNodes.length) applyToAllVideos(); });
+    });
     observer.observe(document.body, { childList: true, subtree: true });
 })();
+
+// ------------------------------------------------------
+/*
+    <video src="video.mp4" video-tools></video>
+    <video src="video.mp4" video-tools-copy></video>
+    <video src="video.mp4" video-tools-share-copy-enter></video>
+*/
